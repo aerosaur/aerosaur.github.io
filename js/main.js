@@ -63,9 +63,9 @@ class Lightbox {
       <button class="lightbox__close" aria-label="Close">&times;</button>
       <button class="lightbox__nav lightbox__nav--prev" aria-label="Previous">&larr;</button>
       <button class="lightbox__nav lightbox__nav--next" aria-label="Next">&rarr;</button>
-      <div class="lightbox__counter"></div>
       <div class="lightbox__content">
         <img src="" alt="">
+        <div class="lightbox__counter"></div>
       </div>
     `;
 

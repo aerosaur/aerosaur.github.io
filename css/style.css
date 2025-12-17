@@ -418,10 +418,14 @@ button {
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
+  position: relative;
 }
 
-/* Back navigation link */
+/* Back navigation link - positioned left, doesn't affect layout */
 .gallery-back {
+  position: absolute;
+  left: var(--spacing-lg);
+  top: var(--spacing-lg);
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);
@@ -429,7 +433,6 @@ button {
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: var(--spacing-md);
   transition: color var(--transition-fast);
 }
 
@@ -521,17 +524,21 @@ button {
 }
 
 .lightbox__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
   max-width: 90vw;
   max-height: 90vh;
-  /* Subtle shadow for depth against glass */
-  filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.3));
 }
 
 .lightbox__content img {
   max-width: 100%;
-  max-height: 90vh;
+  max-height: calc(90vh - 3rem);
   object-fit: contain;
   border-radius: 2px;
+  /* Subtle shadow for depth against glass */
+  filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.3));
 }
 
 .lightbox__close {
@@ -604,21 +611,10 @@ button {
 }
 
 .lightbox__counter {
-  position: absolute;
-  bottom: var(--spacing-lg);
-  left: 50%;
-  transform: translateX(-50%);
-  color: white;
+  color: rgba(255, 255, 255, 0.7);
   font-size: var(--font-size-sm);
   font-weight: 400;
   letter-spacing: 0.1em;
-  opacity: 0.9;
-  /* Glass pill effect */
-  background: rgba(255, 255, 255, 0.1);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  padding: var(--spacing-xs) var(--spacing-md);
-  border-radius: 20px;
 }
 
 /* ==========================================================================
