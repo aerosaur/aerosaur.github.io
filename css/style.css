@@ -892,6 +892,25 @@ button {
     aspect-ratio: 3 / 4;
   }
 
+  /* Smaller text on mobile for single-line fit */
+  .gallery-card__title {
+    font-size: var(--font-size-base);
+  }
+
+  .gallery-card__meta {
+    font-size: var(--font-size-xs);
+  }
+
+  /* Disable lightbox interaction on mobile */
+  .gallery-grid__item {
+    cursor: default;
+  }
+
+  .gallery-grid__item:hover img {
+    transform: none;
+    filter: none;
+  }
+
   .galleries {
     column-count: 2;
     padding: 0 var(--spacing-md) var(--spacing-xl);

@@ -116,8 +116,10 @@ class Lightbox {
   }
 }
 
-// Initialize lightbox if gallery exists
-if (document.querySelector('.gallery-grid')) {
+// Initialize lightbox if gallery exists (desktop only)
+const isMobile = () => window.innerWidth <= 768;
+
+if (document.querySelector('.gallery-grid') && !isMobile()) {
   new Lightbox();
 }
 
