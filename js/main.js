@@ -63,6 +63,7 @@ class Lightbox {
       <button class="lightbox__close" aria-label="Close">&times;</button>
       <button class="lightbox__nav lightbox__nav--prev" aria-label="Previous">&larr;</button>
       <button class="lightbox__nav lightbox__nav--next" aria-label="Next">&rarr;</button>
+      <div class="lightbox__counter"></div>
       <div class="lightbox__content">
         <img src="" alt="">
       </div>
@@ -105,11 +106,13 @@ class Lightbox {
 
   updateImage() {
     const img = this.lightbox.querySelector('.lightbox__content img');
+    const counter = this.lightbox.querySelector('.lightbox__counter');
     const image = this.images[this.currentIndex];
     if (image) {
       img.src = image.src;
       img.alt = image.alt;
     }
+    counter.textContent = `${this.currentIndex + 1} / ${this.images.length}`;
   }
 }
 

@@ -414,10 +414,37 @@ button {
    Gallery Page (Individual)
    ========================================================================== */
 .gallery-header {
-  padding: var(--spacing-2xl) var(--spacing-lg);
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
+}
+
+/* Back navigation link */
+.gallery-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-md);
+  transition: color var(--transition-fast);
+}
+
+.gallery-back:hover {
+  color: var(--color-text);
+}
+
+.gallery-back svg {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--transition-fast);
+}
+
+.gallery-back:hover svg {
+  transform: translateX(-3px);
 }
 
 .gallery-header__title {
@@ -574,6 +601,24 @@ button {
 
 .lightbox__nav--next:hover {
   transform: translateY(-50%) translateX(2px);
+}
+
+.lightbox__counter {
+  position: absolute;
+  bottom: var(--spacing-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  opacity: 0.9;
+  /* Glass pill effect */
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: 20px;
 }
 
 /* ==========================================================================
