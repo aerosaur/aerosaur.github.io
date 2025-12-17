@@ -1,0 +1,22 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.idea/
+.vscode/
+*.sublime-*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies (if you add any later)
+node_modules/
+
+# Environment
+.env
+.env.local
+
+# Backup images (not needed in repo)
+images-backup/

@@ -1,0 +1,102 @@
+backend:
+  name: github
+  repo: aerosaur/aerosaur.github.io  # Update this to your actual repo name
+  branch: main
+  base_url: https://api.netlify.com  # For Netlify Identity authentication
+
+# Uncomment below if using GitHub directly without Netlify
+# backend:
+#   name: github
+#   repo: aerosaur/aerosaur.github.io
+#   branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+# Enable editorial workflow for drafts
+publish_mode: editorial_workflow
+
+collections:
+  # Event/Race Galleries
+  - name: "galleries"
+    label: "Events & Races"
+    folder: "content/galleries"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Event Name", name: "title", widget: "string"}
+      - {label: "Date", name: "date", widget: "datetime"}
+      - {label: "Location", name: "location", widget: "string"}
+      - {label: "Description", name: "description", widget: "text", required: false}
+      - {label: "Cover Image", name: "cover", widget: "image"}
+      - label: "Teams"
+        name: "teams"
+        widget: "select"
+        multiple: true
+        required: false
+        options:
+          - "Human Powered Health"
+          - "L39ION of Los Angeles"
+          - "Hustle Pro Cycling"
+          - "Israel Premier Tech"
+          - "Team USA"
+          - "Team Canada"
+      - label: "Brands"
+        name: "brands"
+        widget: "select"
+        multiple: true
+        required: false
+        options:
+          - "Rapha"
+          - "3T"
+          - "Paper Planes"
+          - "Shimano"
+          - "Jakroo"
+          - "Elite"
+      - label: "Photos"
+        name: "photos"
+        widget: "list"
+        summary: "{{fields.alt}}"
+        fields:
+          - {label: "Image", name: "image", widget: "image"}
+          - {label: "Alt Text", name: "alt", widget: "string"}
+          - {label: "Caption", name: "caption", widget: "string", required: false}
+      - {label: "Order", name: "order", widget: "number", default: 0, required: false}
+
+  # Pages Collection
+  - name: "pages"
+    label: "Pages"
+    files:
+      - label: "About Page"
+        name: "about"
+        file: "content/about.md"
+        fields:
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Profile Photo", name: "photo", widget: "image"}
+          - {label: "Bio", name: "bio", widget: "markdown"}
+          - label: "Social Links"
+            name: "social"
+            widget: "list"
+            fields:
+              - {label: "Platform", name: "platform", widget: "string"}
+              - {label: "URL", name: "url", widget: "string"}
+
+      - label: "Contact Page"
+        name: "contact"
+        file: "content/contact.md"
+        fields:
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Intro Text", name: "intro", widget: "text"}
+          - {label: "Email", name: "email", widget: "string"}
+
+  # Site Settings
+  - name: "settings"
+    label: "Settings"
+    files:
+      - label: "Site Settings"
+        name: "site"
+        file: "content/settings.json"
+        fields:
+          - {label: "Site Title", name: "title", widget: "string", default: "Michael Bowley Photography"}
+          - {label: "Site Description", name: "description", widget: "text"}
+          - {label: "Copyright Text", name: "copyright", widget: "string"}

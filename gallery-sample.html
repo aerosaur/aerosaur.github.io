@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Name | Michael Bowley Photography</title>
+  <meta name="description" content="Photography project by Michael Bowley">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a href="/" class="nav__logo">Michael Bowley</a>
+      <ul class="nav__menu">
+        <li><a href="/" class="nav__link nav__link--active">Work</a></li>
+        <li><a href="/about.html" class="nav__link">About</a></li>
+        <li><a href="/contact.html" class="nav__link">Contact</a></li>
+      </ul>
+      <button class="nav__toggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="main">
+    <header class="gallery-header">
+      <h1 class="gallery-header__title">Project Name</h1>
+      <p class="gallery-header__description">
+        Brief description of this project or shoot. What inspired it, when and where
+        it was captured, or any other context you'd like to share.
+      </p>
+    </header>
+
+    <section class="gallery-grid">
+      <!-- Add your images here. Use data-full for the full-res version in lightbox -->
+      <div class="gallery-grid__item">
+        <img src="images/gallery-1/photo-01.jpg"
+             data-full="images/gallery-1/photo-01.jpg"
+             alt="Photo description"
+             loading="lazy">
+      </div>
+      <div class="gallery-grid__item">
+        <img src="images/gallery-1/photo-02.jpg"
+             data-full="images/gallery-1/photo-02.jpg"
+             alt="Photo description"
+             loading="lazy">
+      </div>
+      <div class="gallery-grid__item">
+        <img src="images/gallery-1/photo-03.jpg"
+             data-full="images/gallery-1/photo-03.jpg"
+             alt="Photo description"
+             loading="lazy">
+      </div>
+      <!-- Add more images as needed -->
+    </section>
+
+    <div style="text-align: center; padding: 2rem;">
+      <a href="/" class="btn">← Back to Work</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 Michael Bowley. All rights reserved.</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
