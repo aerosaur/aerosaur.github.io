@@ -154,11 +154,17 @@ button {
    ========================================================================== */
 .galleries {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 2px;
-  padding: var(--spacing-lg);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xl) var(--spacing-lg);
   max-width: var(--max-width);
   margin: 0 auto;
+}
+
+/* First card spans full width as hero */
+.gallery-card:first-child {
+  grid-column: 1 / -1;
+  aspect-ratio: 21/9;
 }
 
 @keyframes fadeInUp {
@@ -250,8 +256,8 @@ button {
    Gallery Page (Individual)
    ========================================================================== */
 .gallery-header {
-  padding: var(--spacing-2xl) var(--spacing-lg) var(--spacing-xl);
-  max-width: var(--max-width);
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  max-width: 800px;
   margin: 0 auto;
   text-align: center;
 }
@@ -564,7 +570,12 @@ button {
 
   .galleries {
     grid-template-columns: 1fr;
-    padding: var(--spacing-sm);
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+
+  .gallery-card:first-child {
+    aspect-ratio: 16/9;
   }
 
   .gallery-grid {
