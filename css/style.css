@@ -23,7 +23,8 @@
   --spacing-2xl: 5rem;
 
   --transition-fast: 150ms ease;
-  --transition-base: 250ms ease;
+  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 400ms cubic-bezier(0.16, 1, 0.3, 1);
 
   --max-width: 1400px;
   --header-height: 80px;
@@ -160,11 +161,40 @@ button {
   margin: 0 auto;
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .gallery-card {
   position: relative;
   aspect-ratio: 4/3;
   overflow: hidden;
   background: #f4f4f2;
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.gallery-card:nth-child(1) { animation-delay: 0.1s; }
+.gallery-card:nth-child(2) { animation-delay: 0.15s; }
+.gallery-card:nth-child(3) { animation-delay: 0.2s; }
+.gallery-card:nth-child(4) { animation-delay: 0.25s; }
+.gallery-card:nth-child(5) { animation-delay: 0.3s; }
+.gallery-card:nth-child(6) { animation-delay: 0.35s; }
+.gallery-card:nth-child(7) { animation-delay: 0.4s; }
+.gallery-card:nth-child(8) { animation-delay: 0.45s; }
+.gallery-card:nth-child(9) { animation-delay: 0.5s; }
+.gallery-card:nth-child(10) { animation-delay: 0.55s; }
+
+.gallery-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(28, 28, 26, 0.12);
 }
 
 .gallery-card__image {
@@ -176,12 +206,11 @@ button {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-base), opacity var(--transition-base);
+  transition: transform var(--transition-smooth);
 }
 
 .gallery-card:hover .gallery-card__image img {
-  transform: scale(1.02);
-  opacity: 0.9;
+  transform: scale(1.03);
 }
 
 .gallery-card__info {
@@ -190,10 +219,10 @@ button {
   left: 0;
   right: 0;
   padding: var(--spacing-md);
-  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  background: linear-gradient(transparent, rgba(28,28,26,0.75));
   color: white;
   transform: translateY(100%);
-  transition: transform var(--transition-base);
+  transition: transform var(--transition-smooth);
 }
 
 .gallery-card:hover .gallery-card__info {
@@ -268,11 +297,12 @@ button {
   width: 100%;
   height: auto;
   display: block;
-  transition: transform var(--transition-base);
+  transition: transform var(--transition-smooth), filter var(--transition-smooth);
 }
 
 .gallery-grid__item:hover img {
   transform: scale(1.02);
+  filter: brightness(1.05);
 }
 
 /* ==========================================================================
@@ -553,7 +583,7 @@ button {
 
   .gallery-card__info {
     transform: translateY(0);
-    background: linear-gradient(transparent 0%, rgba(0,0,0,0.6) 50%);
+    background: linear-gradient(transparent 0%, rgba(28,28,26,0.65) 50%);
   }
 }
 
@@ -565,5 +595,16 @@ button {
 
   .gallery-grid {
     column-count: 1;
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
