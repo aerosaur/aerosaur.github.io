@@ -249,15 +249,16 @@ button {
 }
 
 .gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--spacing-sm);
+  column-count: 3;
+  column-gap: var(--spacing-sm);
   padding: 0 var(--spacing-lg) var(--spacing-2xl);
   max-width: var(--max-width);
   margin: 0 auto;
 }
 
 .gallery-grid__item {
+  break-inside: avoid;
+  margin-bottom: var(--spacing-sm);
   cursor: pointer;
   overflow: hidden;
   background: #f5f5f5;
@@ -266,6 +267,7 @@ button {
 .gallery-grid__item img {
   width: 100%;
   height: auto;
+  display: block;
   transition: transform var(--transition-base);
 }
 
@@ -519,7 +521,7 @@ button {
   }
 
   .gallery-grid {
-    grid-template-columns: 1fr;
+    column-count: 2;
     padding: 0 var(--spacing-sm) var(--spacing-xl);
   }
 
@@ -542,5 +544,9 @@ button {
   :root {
     --font-size-2xl: 1.5rem;
     --font-size-xl: 1.25rem;
+  }
+
+  .gallery-grid {
+    column-count: 1;
   }
 }
