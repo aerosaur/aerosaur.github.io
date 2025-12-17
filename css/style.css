@@ -240,15 +240,25 @@ button {
 }
 
 /* ==========================================================================
-   Galleries Grid (Homepage)
+   Galleries Grid (Homepage) - Masonry Layout
    ========================================================================== */
 .galleries {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-sm);
+  column-count: 3;
+  column-gap: var(--spacing-sm);
   padding: 0 var(--spacing-lg) var(--spacing-xl);
   max-width: var(--max-width);
   margin: 0 auto;
+}
+
+.galleries .gallery-card {
+  break-inside: avoid;
+  margin-bottom: var(--spacing-sm);
+  aspect-ratio: auto;
+}
+
+.galleries .gallery-card__image img {
+  width: 100%;
+  height: auto;
 }
 
 @keyframes fadeInUp {
@@ -657,9 +667,8 @@ button {
   }
 
   .galleries {
-    grid-template-columns: 1fr;
+    column-count: 2;
     padding: 0 var(--spacing-md) var(--spacing-xl);
-    gap: var(--spacing-sm);
   }
 
   .gallery-grid {
@@ -686,6 +695,10 @@ button {
   :root {
     --font-size-2xl: 1.5rem;
     --font-size-xl: 1.25rem;
+  }
+
+  .galleries {
+    column-count: 1;
   }
 
   .gallery-grid {
