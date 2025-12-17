@@ -288,12 +288,10 @@ button {
   position: relative;
   transform: none;
   background: transparent;
-  padding: 0;
+  padding: var(--spacing-xs) 0 var(--spacing-sm);
   color: var(--color-text);
-  max-height: 0;
-  overflow: hidden;
   opacity: 0;
-  transition: max-height var(--transition-smooth), opacity var(--transition-smooth), padding var(--transition-smooth);
+  transition: opacity var(--transition-smooth);
   display: flex;
   align-items: baseline;
   gap: var(--spacing-xs);
@@ -301,9 +299,7 @@ button {
 }
 
 .galleries .gallery-card:hover .gallery-card__info {
-  max-height: 50px;
   opacity: 1;
-  padding: var(--spacing-xs) 0 var(--spacing-sm);
 }
 
 .galleries .gallery-card__info .gallery-card__title {
