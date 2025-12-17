@@ -254,15 +254,15 @@ button {
 .galleries .gallery-card {
   display: block;
   break-inside: avoid;
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
   aspect-ratio: auto;
-  overflow: hidden;
+  overflow: visible;
   background: transparent;
   position: relative;
 }
 
 .galleries .gallery-card:hover {
-  transform: translateY(-4px);
+  transform: none;
   box-shadow: none;
 }
 
@@ -278,44 +278,53 @@ button {
   height: auto;
   object-fit: contain;
   display: block;
+  transition: transform var(--transition-smooth), filter var(--transition-smooth);
 }
 
 .galleries .gallery-card:hover .gallery-card__image img {
   transform: scale(1.02);
+  filter: brightness(1.05);
 }
 
-/* Text overlays image on hover - prevents column reflow */
+/* Text always visible below image */
 .galleries .gallery-card__info {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(transparent, rgba(28,28,26,0.8));
-  padding: var(--spacing-lg) var(--spacing-sm) var(--spacing-sm);
-  color: white;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity var(--transition-smooth), transform var(--transition-smooth);
+  position: relative;
+  background: transparent;
+  padding: var(--spacing-xs) 0 0;
+  color: var(--color-text);
   display: flex;
   align-items: baseline;
   gap: var(--spacing-xs);
   flex-wrap: wrap;
 }
 
-.galleries .gallery-card:hover .gallery-card__info {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 .galleries .gallery-card__info .gallery-card__title {
-  color: white;
+  color: var(--color-text);
   font-size: var(--font-size-base);
   font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+/* Chevron arrow indicator */
+.galleries .gallery-card__title::after {
+  content: '›';
+  font-size: 1.2em;
+  font-weight: 400;
+  opacity: 0.5;
+  transition: transform var(--transition-smooth), opacity var(--transition-smooth);
+  display: inline-block;
+}
+
+.galleries .gallery-card:hover .gallery-card__title::after {
+  transform: translateX(4px);
+  opacity: 1;
 }
 
 .galleries .gallery-card__info .gallery-card__meta {
-  color: rgba(255,255,255,0.8);
-  opacity: 1;
+  color: var(--color-text-muted);
+  flex-basis: 100%;
 }
 
 @keyframes fadeInUp {
@@ -735,10 +744,9 @@ button {
     padding: 0 var(--spacing-md) var(--spacing-xl);
   }
 
-  /* Mobile: Always show text overlay */
-  .galleries .gallery-card__info {
-    opacity: 1;
-    transform: translateY(0);
+  /* Mobile: Chevron always visible */
+  .galleries .gallery-card__title::after {
+    opacity: 0.5;
   }
 
   .gallery-grid {
