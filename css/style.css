@@ -470,19 +470,22 @@ button {
 }
 
 /* ==========================================================================
-   Lightbox
+   Lightbox - iOS Liquid Glass Effect
    ========================================================================== */
 .lightbox {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.95);
+  /* iOS Liquid Glass: frosted blur with subtle tint */
+  background: rgba(28, 28, 26, 0.4);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  backdrop-filter: blur(32px) saturate(180%);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--transition-base), visibility var(--transition-base);
+  transition: opacity var(--transition-smooth), visibility var(--transition-smooth), backdrop-filter var(--transition-smooth);
 }
 
 .lightbox--active {
@@ -493,12 +496,15 @@ button {
 .lightbox__content {
   max-width: 90vw;
   max-height: 90vh;
+  /* Subtle shadow for depth against glass */
+  filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.3));
 }
 
 .lightbox__content img {
   max-width: 100%;
   max-height: 90vh;
   object-fit: contain;
+  border-radius: 2px;
 }
 
 .lightbox__close {
@@ -508,12 +514,24 @@ button {
   color: white;
   font-size: var(--font-size-xl);
   padding: var(--spacing-sm);
-  opacity: 0.7;
-  transition: opacity var(--transition-fast);
+  opacity: 0.8;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  /* Glass button effect */
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .lightbox__close:hover {
   opacity: 1;
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
 }
 
 .lightbox__nav {
@@ -522,21 +540,40 @@ button {
   transform: translateY(-50%);
   color: white;
   font-size: var(--font-size-2xl);
-  padding: var(--spacing-lg);
-  opacity: 0.7;
-  transition: opacity var(--transition-fast);
+  padding: var(--spacing-md);
+  opacity: 0.8;
+  transition: opacity var(--transition-fast), transform var(--transition-fast), background var(--transition-fast);
+  /* Glass button effect */
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .lightbox__nav:hover {
   opacity: 1;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .lightbox__nav--prev {
-  left: 0;
+  left: var(--spacing-lg);
+}
+
+.lightbox__nav--prev:hover {
+  transform: translateY(-50%) translateX(-2px);
 }
 
 .lightbox__nav--next {
-  right: 0;
+  right: var(--spacing-lg);
+}
+
+.lightbox__nav--next:hover {
+  transform: translateY(-50%) translateX(2px);
 }
 
 /* ==========================================================================
