@@ -245,6 +245,7 @@ button {
 .galleries {
   column-count: 3;
   column-gap: var(--spacing-sm);
+  column-fill: balance;
   padding: 0 var(--spacing-lg) var(--spacing-xl);
   max-width: var(--max-width);
   margin: 0 auto;
@@ -255,26 +256,61 @@ button {
   break-inside: avoid;
   margin-bottom: var(--spacing-sm);
   aspect-ratio: auto;
+  overflow: visible;
+  background: transparent;
+}
+
+.galleries .gallery-card:hover {
+  transform: none;
+  box-shadow: none;
 }
 
 .galleries .gallery-card__image {
   position: relative;
   width: 100%;
   height: auto;
+  overflow: hidden;
 }
 
 .galleries .gallery-card__image img {
   width: 100%;
   height: auto;
   object-fit: contain;
+  display: block;
 }
 
+.galleries .gallery-card:hover .gallery-card__image img {
+  transform: scale(1.02);
+}
+
+/* Text appears UNDER image on hover - desktop */
 .galleries .gallery-card__info {
   position: relative;
   transform: none;
-  background: linear-gradient(transparent, rgba(28,28,26,0.85));
-  padding: var(--spacing-sm) var(--spacing-md);
-  margin-top: -60px;
+  background: transparent;
+  padding: 0;
+  color: var(--color-text);
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height var(--transition-smooth), opacity var(--transition-smooth), padding var(--transition-smooth);
+}
+
+.galleries .gallery-card:hover .gallery-card__info {
+  max-height: 80px;
+  opacity: 1;
+  padding: var(--spacing-xs) 0 var(--spacing-sm);
+}
+
+.galleries .gallery-card__info .gallery-card__title {
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+}
+
+.galleries .gallery-card__info .gallery-card__meta {
+  color: var(--color-text-muted);
+  opacity: 1;
 }
 
 @keyframes fadeInUp {
@@ -687,6 +723,13 @@ button {
     padding: 0 var(--spacing-md) var(--spacing-xl);
   }
 
+  /* Mobile: Always show text under image */
+  .galleries .gallery-card__info {
+    max-height: none;
+    opacity: 1;
+    padding: var(--spacing-xs) 0 var(--spacing-sm);
+  }
+
   .gallery-grid {
     column-count: 2;
     padding: 0 var(--spacing-sm) var(--spacing-xl);
@@ -701,7 +744,8 @@ button {
     order: -1;
   }
 
-  .gallery-card__info {
+  /* Featured scroll cards show info on mobile */
+  .featured__scroll .gallery-card__info {
     transform: translateY(0);
     background: linear-gradient(transparent 0%, rgba(28,28,26,0.65) 50%);
   }
