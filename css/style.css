@@ -360,7 +360,7 @@ button {
 }
 
 .about__image {
-  aspect-ratio: 3/4;
+  aspect-ratio: 1/1;
   overflow: hidden;
 }
 
@@ -368,6 +368,7 @@ button {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top;
 }
 
 .about__content h1 {
@@ -387,15 +388,31 @@ button {
   display: flex;
   gap: var(--spacing-md);
   margin-top: var(--spacing-lg);
+  flex-wrap: wrap;
 }
 
 .about__social a {
-  color: var(--color-text-muted);
-  transition: color var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity var(--transition-fast);
 }
 
 .about__social a:hover {
-  color: var(--color-text);
+  opacity: 0.8;
+}
+
+.about__social svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
 }
 
 /* ==========================================================================
