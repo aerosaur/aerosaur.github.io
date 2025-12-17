@@ -286,16 +286,22 @@ button {
   filter: brightness(1.05);
 }
 
-/* Text always visible below image */
+/* Text always visible below image - override base styles */
 .galleries .gallery-card__info {
-  position: relative;
-  background: transparent;
-  padding: var(--spacing-xs) 0 0;
+  position: relative !important;
+  transform: none !important;
+  background: transparent !important;
+  padding: var(--spacing-xs) 0 0 !important;
   color: var(--color-text);
   display: flex;
   align-items: baseline;
   gap: var(--spacing-xs);
   flex-wrap: wrap;
+  opacity: 1 !important;
+}
+
+.galleries .gallery-card:hover .gallery-card__info {
+  transform: none !important;
 }
 
 .galleries .gallery-card__info .gallery-card__title {
