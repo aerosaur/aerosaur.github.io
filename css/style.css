@@ -448,33 +448,33 @@ button {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  border: 1px solid var(--color-text);
+  border: 1px solid var(--color-border);
   cursor: pointer;
   overflow: hidden;
-  transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 1;
 }
 
-/* Sweep fill effect */
-.btn-back::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--color-text);
-  transform: translateX(-101%);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: -1;
-}
-
+/* Soft fill effect */
 .btn-back:hover {
-  color: white;
+  background-color: #edede9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(28, 28, 26, 0.08);
 }
 
-.btn-back:hover::before {
-  transform: translateX(0);
+/* Active press state */
+.btn-back:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 6px rgba(28, 28, 26, 0.06);
+  transition-duration: 0.1s;
+}
+
+/* Focus ring for accessibility */
+.btn-back:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 3px;
 }
 
 /* Arrow animation */
@@ -745,32 +745,32 @@ button {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  border: 1px solid var(--color-text);
+  border: 1px solid var(--color-border);
   overflow: hidden;
-  transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 1;
 }
 
-/* Sweep fill effect */
-.about__social a::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--color-text);
-  transform: translateX(-101%);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: -1;
-}
-
+/* Soft fill effect */
 .about__social a:hover {
-  color: white;
+  background-color: #edede9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(28, 28, 26, 0.08);
 }
 
-.about__social a:hover::before {
-  transform: translateX(0);
+/* Active press state */
+.about__social a:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 6px rgba(28, 28, 26, 0.06);
+  transition-duration: 0.1s;
+}
+
+/* Focus ring for accessibility */
+.about__social a:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 3px;
 }
 
 .about__social svg {
@@ -856,7 +856,7 @@ button {
   gap: var(--spacing-md);
 }
 
-/* Submit button with sweep fill animation */
+/* Submit button with soft fill + lift */
 .btn-submit {
   position: relative;
   display: inline-flex;
@@ -870,33 +870,34 @@ button {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  border: 1px solid var(--color-text);
+  border: 1px solid var(--color-border);
   cursor: pointer;
   overflow: hidden;
-  transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 1;
   margin-top: var(--spacing-sm);
 }
 
-.btn-submit::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--color-text);
-  transform: translateX(-101%);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: -1;
-}
-
+/* Soft fill effect */
 .btn-submit:hover {
-  color: white;
+  background-color: #edede9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(28, 28, 26, 0.08);
 }
 
-.btn-submit:hover::before {
-  transform: translateX(0);
+/* Active press state */
+.btn-submit:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 6px rgba(28, 28, 26, 0.06);
+  transition-duration: 0.1s;
+}
+
+/* Focus ring for accessibility */
+.btn-submit:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 3px;
 }
 
 .btn-submit svg {
@@ -911,6 +912,21 @@ button {
 
 .btn-submit span {
   position: relative;
+}
+
+/* Loading state for submit button */
+.btn-submit.is-loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.btn-submit.is-loading svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Alternative contact section (Instagram) */

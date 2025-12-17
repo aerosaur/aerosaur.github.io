@@ -163,3 +163,24 @@ document.querySelectorAll('a[href^="/"], a[href^="./"]').forEach(link => {
     }, 300);
   });
 });
+
+// ==========================================================================
+// Contact Form Loading State
+// ==========================================================================
+const contactForm = document.querySelector('.contact__form');
+const submitBtn = document.querySelector('.btn-submit');
+
+if (contactForm && submitBtn) {
+  const originalText = submitBtn.querySelector('span').textContent;
+  const originalSvg = submitBtn.querySelector('svg').outerHTML;
+
+  // Spinner SVG for loading state
+  const spinnerSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
+
+  contactForm.addEventListener('submit', function() {
+    // Add loading state
+    submitBtn.classList.add('is-loading');
+    submitBtn.querySelector('span').textContent = 'Sending...';
+    submitBtn.querySelector('svg').outerHTML = spinnerSvg;
+  });
+}
