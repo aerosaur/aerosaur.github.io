@@ -1020,6 +1020,10 @@ button {
     display: flex;
   }
 
+  .nav__logo {
+    font-size: var(--font-size-sm);
+  }
+
   .featured__scroll .gallery-card {
     flex: 0 0 85vw;
   }
