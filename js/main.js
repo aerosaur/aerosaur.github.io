@@ -4,6 +4,53 @@
  */
 
 // ==========================================================================
+// iOS Safe Area Fix
+// Creates a solid color overlay at the top to cover notch/Dynamic Island
+// Only activates when scrolled (when Safari's address bar minimizes)
+// ==========================================================================
+(function() {
+  // Only run on iOS devices
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+  if (!isIOS) return;
+
+  // Create safe area cover element
+  const safeAreaCover = document.createElement('div');
+  safeAreaCover.id = 'ios-safe-area-cover';
+  safeAreaCover.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    background: #fafaf8;
+    z-index: 10001;
+    pointer-events: none;
+    transition: height 0.1s ease;
+  `;
+  document.body.appendChild(safeAreaCover);
+
+  // Detect if safe area is active (env returns non-zero when scrolled on notch devices)
+  let lastScrollY = 0;
+  let isScrolled = false;
+
+  function updateSafeAreaCover() {
+    const scrolled = window.scrollY > 50;
+    if (scrolled !== isScrolled) {
+      isScrolled = scrolled;
+      // When scrolled, use env() value or fallback to 47px for notch devices
+      safeAreaCover.style.height = scrolled ? 'env(safe-area-inset-top, 47px)' : '0';
+    }
+    lastScrollY = window.scrollY;
+  }
+
+  // Use passive scroll listener for performance
+  window.addEventListener('scroll', updateSafeAreaCover, { passive: true });
+  updateSafeAreaCover();
+})();
+
+// ==========================================================================
 // Mobile Navigation
 // ==========================================================================
 const navToggle = document.querySelector('.nav__toggle');

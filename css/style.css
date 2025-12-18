@@ -45,6 +45,20 @@ html {
   background: var(--color-bg);
 }
 
+/* iOS safe area fill - covers notch/Dynamic Island with solid color */
+/* This sits at the very top of viewport with highest z-index */
+html::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--color-bg);
+  z-index: 10000;
+  pointer-events: none;
+}
+
 body {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
@@ -107,17 +121,6 @@ button {
   border-bottom: 1px solid var(--color-border);
 }
 
-/* iOS safe area fill - extends header background into notch/Dynamic Island area */
-.header::before {
-  content: '';
-  position: absolute;
-  top: calc(-1 * env(safe-area-inset-top, 0px));
-  left: 0;
-  right: 0;
-  height: env(safe-area-inset-top, 0px);
-  background: var(--color-bg);
-  z-index: -1;
-}
 
 .nav {
   display: flex;
