@@ -715,6 +715,7 @@ button {
 }
 
 .about__content p {
+  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   margin-bottom: var(--spacing-md);
   line-height: 1.8;
@@ -813,6 +814,7 @@ button {
 }
 
 .contact__intro {
+  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   margin-bottom: var(--spacing-xl);
 }
