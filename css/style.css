@@ -649,22 +649,26 @@ button {
   position: relative;
 }
 
+/* Cassette futurism: Gallery header typography */
 .gallery-header__title {
   font-size: var(--font-size-2xl);
   font-weight: 500;
   margin-bottom: var(--spacing-sm);
-  letter-spacing: -0.02em;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
 }
 
 .gallery-header__meta {
   color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   letter-spacing: 0.1em;
+  text-transform: lowercase;
   margin-bottom: var(--spacing-md);
 }
 
 .gallery-header__description {
   color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
   max-width: 600px;
   margin: 0 auto;
 }
@@ -677,24 +681,30 @@ button {
   margin: 0 auto;
 }
 
+/* Cassette futurism: Gallery images - inset at rest, lift on hover */
 .gallery-grid__item {
   break-inside: avoid;
   margin-bottom: var(--spacing-sm);
   cursor: pointer;
-  overflow: hidden;
+  overflow: visible;
   background: #f4f4f2;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .gallery-grid__item img {
   width: 100%;
   height: auto;
   display: block;
-  transition: transform var(--transition-smooth), filter var(--transition-smooth);
+  border-radius: 2px;
 }
 
-.gallery-grid__item:hover img {
-  transform: scale(1.02);
-  filter: brightness(1.05);
+.gallery-grid__item:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 /* ==========================================================================
@@ -1303,11 +1313,12 @@ button {
   /* Disable lightbox interaction on mobile */
   .gallery-grid__item {
     cursor: default;
+    box-shadow: none;
   }
 
-  .gallery-grid__item:hover img {
+  .gallery-grid__item:hover {
     transform: none;
-    filter: none;
+    box-shadow: none;
   }
 
   .galleries {
