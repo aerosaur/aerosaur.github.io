@@ -365,7 +365,6 @@
       height: 9em;
       background: var(--cassette-reel);
       border-radius: 50%;
-      transition: width var(--transition-smooth), height var(--transition-smooth), margin var(--transition-smooth);
     }
 
     .reelOne::after {
@@ -393,7 +392,6 @@
       height: 6em;
       background: var(--cassette-reel);
       border-radius: 50%;
-      transition: width var(--transition-smooth), height var(--transition-smooth), margin var(--transition-smooth);
     }
 
     .reelTwo::after {
@@ -560,20 +558,6 @@
     /* Playing Animation */
     .cassetteOuter.is-playing .teethBox {
       animation: spin-teeth 1s linear infinite;
-    }
-
-    .cassetteOuter.is-playing .reelOne {
-      margin-left: -4em;
-      margin-top: -4em;
-      width: 8em;
-      height: 8em;
-    }
-
-    .cassetteOuter.is-playing .reelTwo {
-      margin-right: -3.5em;
-      margin-top: -3.5em;
-      width: 7em;
-      height: 7em;
     }
 
     @keyframes spin-teeth {
@@ -1207,6 +1191,8 @@
     const progressFill = document.getElementById('progressFill');
     const currentTimeEl = document.getElementById('currentTime');
     const durationEl = document.getElementById('duration');
+    const reelOne = document.querySelector('.reelOne');
+    const reelTwo = document.querySelector('.reelTwo');
 
     function formatTime(seconds) {
       if (isNaN(seconds)) return '00:00';
@@ -1215,10 +1201,35 @@
       return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
 
+    function updateReels(progress) {
+      // progress: 0 = start of tape, 1 = end of tape
+      // reelOne (supply reel): shrinks from 9em to 8em as tape plays
+      // reelTwo (take-up reel): grows from 6em to 7em as tape plays
+      const reelOneSize = 9 - progress;          // 9em → 8em
+      const reelOneMargin = -4.5 + (0.5 * progress);  // -4.5em → -4em
+      const reelTwoSize = 6 + progress;          // 6em → 7em
+      const reelTwoMargin = -3 - (0.5 * progress);    // -3em → -3.5em
+
+      reelOne.style.width = reelOneSize + 'em';
+      reelOne.style.height = reelOneSize + 'em';
+      reelOne.style.marginLeft = reelOneMargin + 'em';
+      reelOne.style.marginTop = reelOneMargin + 'em';
+
+      reelTwo.style.width = reelTwoSize + 'em';
+      reelTwo.style.height = reelTwoSize + 'em';
+      reelTwo.style.marginRight = reelTwoMargin + 'em';
+      reelTwo.style.marginTop = reelTwoMargin + 'em';
+    }
+
     function updateProgress() {
-      const percent = (audio.currentTime / audio.duration) * 100;
-      progressFill.style.width = percent + '%';
+      const progress = audio.currentTime / audio.duration;
+      progressFill.style.width = (progress * 100) + '%';
       currentTimeEl.textContent = formatTime(audio.currentTime);
+
+      // Sync reel sizes with playback position
+      if (!isNaN(progress)) {
+        updateReels(progress);
+      }
     }
 
     playBtn.addEventListener('click', () => {
