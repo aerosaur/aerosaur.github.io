@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>carrying light</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #fafaf8;
+      --color-text: #2A2A27;
+      --color-text-muted: #6b6b66;
+      --color-border: #e8e8e4;
+      --color-accent: #D35400;
+      --color-accent-dark: #b34700;
+      --color-accent-muted: rgba(211, 84, 0, 0.15);
+
+      /* Cassette colors - warm grey palette */
+      --cassette-body: #bbbbbb;
+      --cassette-body-dark: #9a9a9a;
+      --cassette-body-darker: #7a7a7a;
+      --cassette-body-light: #d0d0d0;
+      --cassette-cream: #efeeeb;
+      --cassette-cream-dark: #dad8d2;
+      --cassette-window-bg: #3a3a36;
+      --cassette-window-dark: #2d2d2a;
+      --cassette-reel: #4d3b3b;
+      --screw-grey: #5e5f5a;
+
+      /* Paper / sleeve colors */
+      --paper: #f8f1e1;
+      --paper-dark: #e8e1d1;
+
+      /* Sharp shadow color - warm gray for geometric shadows */
+      --shadow-color: rgba(42, 42, 39, 0.18);
+
+      --font-family: 'JetBrains Mono', monospace;
+      --font-cursive: 'Shadows Into Light', cursive;
+      --transition-fast: 150ms ease;
+      --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-smooth: 1s ease;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Clearfix */
+    .clearfix::before,
+    .clearfix::after {
+      content: " ";
+      display: table;
+    }
+    .clearfix::after { clear: both; }
+
+    html {
+      font-size: 16px;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: var(--font-family);
+      font-size: 1.5em;
+      font-weight: 400;
+      line-height: 1.4em;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      padding: 5em 0 10em 0;
+    }
+
+    /* Subtle grain texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .player-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    /* ==================== CASSETTE ==================== */
+    .cassetteOuter {
+      position: relative;
+      margin: 0 auto;
+      background: var(--cassette-body);
+      border-radius: 0.7em;
+      width: 20em;
+      height: 12em;
+      /* Single unified shadow on parent - creates one silhouette */
+      box-shadow: var(--cassette-body-dark) 0 0.6em 0 0;
+      filter: drop-shadow(-0.9em 1.8em 0 rgba(28, 28, 26, 0.2));
+      padding: 1em;
+      border-top: rgba(255,255,255,0.3) solid 0.1em;
+      border-bottom: var(--cassette-body-dark) solid 0.1em;
+    }
+
+    /* Side depth edges - no individual shadows */
+    .cassetteOuter::before {
+      position: absolute;
+      bottom: 1em;
+      right: 100%;
+      content: "";
+      height: 3.5em;
+      border-right: var(--cassette-body-dark) solid 0.2em;
+      border-top: transparent solid 0.2em;
+      border-bottom: transparent solid 0.2em;
+    }
+
+    .cassetteOuter::after {
+      position: absolute;
+      z-index: -9000;
+      bottom: 1em;
+      left: 100%;
+      content: "";
+      height: 3.5em;
+      border-left: var(--cassette-body-light) solid 0.2em;
+      border-top: transparent solid 0.2em;
+      border-bottom: transparent solid 0.2em;
+    }
+
+    /* Screws */
+    .screw {
+      position: absolute;
+      display: block;
+      width: 0;
+      height: 0;
+      border-left: var(--screw-grey) solid 0.4em;
+      border-bottom: var(--screw-grey) solid 0.3em;
+      border-top: #a0a09a solid 0.4em;
+      border-right: #a0a09a solid 0.4em;
+      border-radius: 50%;
+      box-shadow: var(--cassette-body-darker) 0 -0.2em 0 0;
+    }
+
+    .screw::before {
+      position: absolute;
+      top: -0.25em;
+      right: -0.35em;
+      display: block;
+      content: "";
+      width: 0.3em;
+      height: 0.2em;
+      border-radius: 50%;
+      background: white;
+      transform: rotate(45deg);
+    }
+
+    .screw.screw1 { top: 0.5em; left: 0.3em; }
+    .screw.screw2 { top: 0.5em; right: 0.3em; }
+    .screw.screw3 { bottom: 0.3em; left: 0.3em; }
+    .screw.screw4 { bottom: 0.3em; right: 0.3em; }
+
+    .screw1 .screwInner { transform: rotate(20deg); }
+    .screw2 .screwInner { transform: rotate(30deg); }
+    .screw3 .screwInner { transform: rotate(10deg); }
+    .screw4 .screwInner { transform: rotate(-10deg); }
+
+    .screwInner {
+      position: absolute;
+      top: -0.15em;
+      left: -0.225em;
+      display: block;
+      width: 0.45em;
+      height: 0.2em;
+      border-radius: 0.1em;
+      background: #4a4b46;
+    }
+
+    .screwInner::after {
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      content: "";
+      width: 0.45em;
+      height: 0.2em;
+      border-radius: 0.1em;
+      background: #4a4b46;
+      transform: rotate(90deg);
+    }
+
+    /* Label sticker area */
+    .stickerOuter {
+      width: 100%;
+      height: 8em;
+      background: var(--cassette-body);
+      border-radius: 0.7em;
+      border-top: var(--cassette-body-dark) solid 0.1em;
+      border-bottom: var(--cassette-body-light) solid 0.1em;
+      position: relative;
+    }
+
+    .sticker {
+      position: absolute;
+      top: 0.2em;
+      right: 0.2em;
+      left: 0.2em;
+      bottom: 0.2em;
+      background: var(--cassette-cream);
+      border-radius: 0.7em;
+      border-bottom: var(--cassette-body-darker) solid 1px;
+    }
+
+    .a-side {
+      position: absolute;
+      border-radius: 0.1em;
+      top: 0.8em;
+      left: 1em;
+      font-weight: 600;
+      display: block;
+      background: var(--color-text);
+      color: var(--cassette-cream);
+      width: 1.1em;
+      height: 1.1em;
+      padding-top: 0.1em;
+      line-height: 1em;
+      text-align: center;
+      font-size: 0.8em;
+    }
+
+    .cursive {
+      font-family: var(--font-cursive);
+      display: block;
+      padding: 0.5em 0.5em 0.5em 4em;
+      transform: rotate(-3deg);
+      color: var(--color-text);
+      font-size: 1em;
+    }
+
+    .stripe {
+      display: block;
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      border-top: var(--color-accent) solid 0.3em;
+      border-bottom: var(--color-text) solid 0.3em;
+    }
+
+    .c90 {
+      position: absolute;
+      bottom: -0.1em;
+      left: 3.5em;
+      color: #4b9121;
+      font-weight: 600;
+      font-size: 0.45em;
+    }
+
+    .logo {
+      position: absolute;
+      bottom: -0.1em;
+      right: 3.5em;
+      font-weight: 600;
+      font-size: 0.45em;
+      color: var(--color-text-muted);
+    }
+
+    /* Middle tape window area */
+    .middle {
+      position: relative;
+      width: 60%;
+      margin: 0.5em auto 0;
+      background: var(--cassette-body);
+      padding: 0.2em;
+      border-radius: 0.4em;
+      border-top: var(--cassette-body-light) solid 0.1em;
+      border-bottom: var(--cassette-body-dark) solid 0.1em;
+      box-shadow:
+        var(--cassette-body) 0 0 0 0.5em,
+        var(--cassette-body-darker) 0 -1px 0 0.5em;
+    }
+
+    .circle {
+      display: block;
+      position: relative;
+      float: left;
+      width: 2.3em;
+      height: 2.4em;
+      border-radius: 50%;
+      background: var(--cassette-window-bg);
+      border-top: var(--cassette-body-dark) solid 0.1em;
+      border-bottom: var(--cassette-body-light) solid 0.1em;
+      box-shadow:
+        inset var(--cassette-body) 0 0 0 0.2em,
+        inset var(--cassette-body-dark) 0 0.1em 0 0.2em,
+        inset var(--cassette-cream) 0 0.1em 0 0.4em,
+        inset var(--cassette-cream-dark) 0 0.2em 0 0.4em,
+        inset var(--cassette-window-dark) -0.7em 1.5em 0 0;
+    }
+
+    .circle.two { float: right; }
+
+    .teethBox {
+      position: absolute;
+      top: 50%;
+      margin-top: -0.75em;
+      left: 50%;
+      margin-left: -0.85em;
+      width: 1.7em;
+      height: 1.7em;
+      transition: transform var(--transition-smooth);
+    }
+
+    .teeth {
+      display: block;
+      position: absolute;
+      top: 50%;
+      margin-top: -0.1em;
+      left: 50%;
+      width: 1.7em;
+      margin-left: -0.85em;
+      height: 0.2em;
+      box-shadow:
+        inset var(--cassette-cream) 0.25em 0 0 0,
+        inset var(--cassette-cream) -0.25em 0 0 0;
+    }
+
+    .teeth:nth-of-type(2) { transform: rotate(60deg); }
+    .teeth:nth-of-type(3) { transform: rotate(-60deg); }
+
+    /* Tape window */
+    .window {
+      position: absolute;
+      z-index: 2;
+      top: 0.2em;
+      left: 50%;
+      margin-left: -2.5em;
+      margin-top: 0.3em;
+      width: 5em;
+      height: 1.8em;
+      border-radius: 0.4em;
+      overflow: hidden;
+      background: var(--cassette-window-dark);
+      border-top: var(--cassette-body-dark) solid 0.1em;
+      border-bottom: var(--cassette-body-light) solid 0.1em;
+      box-shadow:
+        inset var(--cassette-body-dark) 0 0.2em 0 0,
+        var(--cassette-body) 0 0 0 0.25em,
+        var(--cassette-body-dark) 0 -0.1em 0 0.2em,
+        var(--cassette-body-light) 0 0.1em 0 0.2em;
+    }
+
+    .reelOne {
+      position: absolute;
+      left: -1.4em;
+      top: 0.9em;
+      display: block;
+      margin-left: -4.5em;
+      margin-top: -4.5em;
+      width: 9em;
+      height: 9em;
+      background: var(--cassette-reel);
+      border-radius: 50%;
+      transition: width var(--transition-smooth), height var(--transition-smooth), margin var(--transition-smooth);
+    }
+
+    .reelOne::after {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      content: '';
+      width: 4em;
+      height: 4em;
+      margin: -2em 0 0 -2em;
+      border-radius: 50%;
+      background: var(--cassette-cream);
+      border: var(--cassette-cream) solid 0.2em;
+      box-shadow: inset var(--cassette-cream-dark) 0 0 0 0.2em;
+    }
+
+    .reelTwo {
+      position: absolute;
+      right: -1.4em;
+      top: 0.9em;
+      display: block;
+      margin-right: -3em;
+      margin-top: -3em;
+      width: 6em;
+      height: 6em;
+      background: var(--cassette-reel);
+      border-radius: 50%;
+      transition: width var(--transition-smooth), height var(--transition-smooth), margin var(--transition-smooth);
+    }
+
+    .reelTwo::after {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      content: '';
+      width: 4em;
+      height: 4em;
+      margin: -2em 0 0 -2em;
+      border-radius: 50%;
+      background: var(--cassette-cream);
+      border: var(--cassette-cream) solid 0.2em;
+      box-shadow: inset var(--cassette-cream-dark) 0 0 0 0.2em;
+    }
+
+    /* Cassette bottom */
+    .cassetteBottom {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      height: 2.2em;
+      width: 10em;
+      margin-left: -5em;
+      background: var(--cassette-body-light);
+      border-top: rgba(255,255,255,0.4) solid 0.1em;
+    }
+
+    .cassetteBottom .screw5 {
+      bottom: 1em;
+      left: 50%;
+      margin-left: -0.5em;
+    }
+
+    .cassetteBottom::before {
+      content: '';
+      position: absolute;
+      right: 100%;
+      border-right: var(--cassette-body-light) solid 0.5em;
+      border-top: transparent solid 2.2em;
+    }
+
+    .cassetteBottom::after {
+      content: '';
+      position: absolute;
+      left: 100%;
+      border-left: var(--cassette-body-light) solid 0.5em;
+      border-top: transparent solid 2.2em;
+    }
+
+    .bottomShadow {
+      position: absolute;
+      z-index: 100;
+      left: 50%;
+      margin-left: -5.5em;
+      bottom: -0.7em;
+      width: 11em;
+      height: 0.7em;
+      background: var(--cassette-body-dark);
+    }
+
+    .bottomShadow::before {
+      content: '';
+      display: block;
+      position: absolute;
+      z-index: 100;
+      bottom: 100%;
+      left: 50%;
+      margin-left: -5.5em;
+      width: 10.4em;
+      border-bottom: var(--cassette-body-dark) solid 0.1em;
+      border-right: transparent solid 0.3em;
+      border-left: transparent solid 0.3em;
+    }
+
+    .bottomShadow::after {
+      content: '';
+      display: block;
+      position: absolute;
+      z-index: 100;
+      top: 100%;
+      left: 50%;
+      margin-left: -5.5em;
+      width: 10.4em;
+      border-top: var(--cassette-body-dark) solid 0.1em;
+      border-right: transparent solid 0.3em;
+      border-left: transparent solid 0.3em;
+    }
+
+    .holes {
+      display: block;
+      position: absolute;
+      bottom: 0.8em;
+      width: 0.8em;
+      height: 0.6em;
+      border-radius: 0.2em;
+      background: var(--cassette-body-darker);
+      box-shadow: inset var(--cassette-body-dark) 0 0.1em 0 0;
+    }
+
+    .holes::after {
+      position: absolute;
+      top: 0.5em;
+      content: '';
+      width: 0.6em;
+      height: 0.6em;
+      border-radius: 50%;
+      background: var(--cassette-body-darker);
+      box-shadow: inset var(--cassette-body-dark) 0 0.1em 0 0;
+    }
+
+    .holes.one { left: 20%; }
+    .holes.one::after { right: 200%; }
+    .holes.two { right: 20%; }
+    .holes.two::after { left: 200%; }
+
+    .bottomHoles {
+      position: absolute;
+      top: 0.05em;
+      width: 2em;
+      height: 0.6em;
+      background: var(--cassette-body-darker);
+      box-shadow:
+        inset var(--cassette-reel) 0 0.3em 0 0,
+        inset var(--cassette-body-dark) 0 -0.1em 0 0;
+    }
+
+    .bottomHoles.one { left: 0.5em; }
+    .bottomHoles.two {
+      left: 50%;
+      margin-left: -1em;
+    }
+
+    .bottomHoles.two::before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0.1em;
+      right: 140%;
+      width: 0.4em;
+      height: 0.4em;
+      background: var(--cassette-body-darker);
+      box-shadow:
+        inset var(--cassette-reel) 0 0.2em 0 0,
+        inset var(--cassette-body-dark) 0 -0.05em 0 0;
+    }
+
+    .bottomHoles.two::after {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0.1em;
+      left: 140%;
+      width: 0.4em;
+      height: 0.4em;
+      background: var(--cassette-body-darker);
+      box-shadow:
+        inset var(--cassette-reel) 0 0.2em 0 0,
+        inset var(--cassette-body-dark) 0 -0.05em 0 0;
+    }
+
+    .bottomHoles.three { right: 0.5em; }
+
+    /* Playing Animation */
+    .cassetteOuter.is-playing .teethBox {
+      animation: spin-teeth 1s linear infinite;
+    }
+
+    .cassetteOuter.is-playing .reelOne {
+      margin-left: -4em;
+      margin-top: -4em;
+      width: 8em;
+      height: 8em;
+    }
+
+    .cassetteOuter.is-playing .reelTwo {
+      margin-right: -3.5em;
+      margin-top: -3.5em;
+      width: 7em;
+      height: 7em;
+    }
+
+    @keyframes spin-teeth {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* ==================== TRANSPORT CONTROLS ==================== */
+    .transport {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.03);
+      border-radius: 4px;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+      margin-top: 3em;
+    }
+
+    .transport__btn {
+      position: relative;
+      width: 48px;
+      height: 40px;
+      background: var(--cassette-body);
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        inset 0 -2px 0 var(--cassette-body-dark),
+        inset 0 1px 0 var(--cassette-body-light),
+        0 2px 4px rgba(0,0,0,0.1);
+      transition: all 0.1s ease;
+    }
+
+    .transport__btn:hover {
+      background: var(--cassette-body-light);
+    }
+
+    .transport__btn:active {
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+      transform: translateY(1px);
+    }
+
+    .transport__btn svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--color-text);
+    }
+
+    .transport__btn--play {
+      width: 56px;
+      background: var(--color-accent);
+      box-shadow:
+        inset 0 -2px 0 var(--color-accent-dark),
+        inset 0 1px 0 #e86a1a,
+        0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    .transport__btn--play:hover {
+      background: #e25d00;
+    }
+
+    .transport__btn--play svg {
+      fill: white;
+    }
+
+    .transport__btn--play:active {
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .transport__btn--play .icon-pause { display: none; }
+    .transport__btn--play.is-playing .icon-play { display: none; }
+    .transport__btn--play.is-playing .icon-pause { display: block; }
+
+    /* Pressed/locked state - button pushed down like real cassette deck */
+    .transport__btn.is-pressed {
+      transform: translateY(2px);
+      box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.2),
+        inset 0 1px 2px rgba(0,0,0,0.1);
+      background: var(--cassette-body-dark);
+    }
+
+    .transport__btn.is-pressed:hover {
+      background: var(--cassette-body-dark);
+    }
+
+    .transport__btn--play.is-pressed {
+      background: var(--color-accent-dark);
+      box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.25),
+        inset 0 1px 2px rgba(0,0,0,0.15);
+    }
+
+    .transport__btn--play.is-pressed:hover {
+      background: var(--color-accent-dark);
+    }
+
+    /* ==================== PROGRESS ==================== */
+    .progress {
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .progress__bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.06);
+      border-radius: 3px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    .progress__fill {
+      height: 100%;
+      width: 0%;
+      background: var(--color-accent);
+      border-radius: 3px;
+      transition: width 0.1s linear;
+    }
+
+    .progress__time {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.5rem;
+      color: var(--color-text-muted);
+      letter-spacing: 0.05em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ==================== LINER NOTES / FOLDED SLEEVE ==================== */
+    .linerNotes {
+      width: 21em;
+      margin: 1em auto;
+      /* Single unified shadow for entire folded J-card */
+      filter: drop-shadow(-0.8em 1.2em 0 rgba(28, 28, 26, 0.2));
+    }
+
+    /* Top flap - folded back */
+    .linerNotesTop {
+      transform: rotate(180deg) skewX(10deg);
+      position: relative;
+      left: 0.3em;
+      height: 3em;
+      background: var(--paper);
+      padding: 0.4em;
+    }
+
+    .boxDesc {
+      font-size: 0.3em;
+      display: block;
+      float: left;
+      color: var(--color-text-muted);
+    }
+
+    .infoBoxes {
+      font-size: 0.6em;
+      display: block;
+      float: right;
+      width: 40%;
+    }
+
+    .infoBoxes .box1,
+    .infoBoxes .box2,
+    .infoBoxes .box3 {
+      display: block;
+      text-transform: uppercase;
+      text-align: center;
+      border: var(--color-text) solid 0.2em;
+      width: 33.33%;
+      height: 2.4rem;
+      float: left;
+      line-height: 1rem;
+    }
+
+    .infoBoxes .box1 {
+      font-size: 0.6em;
+      padding-top: 0.1em;
+    }
+
+    .infoBoxes .box2 {
+      font-size: 0.8em;
+      background: var(--color-text);
+      color: var(--paper);
+      font-weight: 600;
+      padding-top: 0.7em;
+    }
+
+    .infoBoxes .box3 {
+      font-size: 0.6em;
+      padding-top: 0.6em;
+    }
+
+    .boxCopyright {
+      display: block;
+      width: 100%;
+      height: 0.8em;
+      font-size: 0.6em;
+      text-align: center;
+      position: relative;
+      top: -0.4em;
+      color: var(--color-text-muted);
+    }
+
+    /* Spine */
+    .linerNotesSpine {
+      transform: skewX(-10deg) rotate(180deg);
+      position: relative;
+      left: 0.3em;
+      height: 3em;
+      background: var(--color-accent);
+      border-top: var(--color-text) solid 0.8em;
+      border-bottom: var(--color-text) solid 0.8em;
+      text-align: center;
+      font-weight: 600;
+      line-height: 1em;
+      box-shadow:
+        inset var(--paper-dark) 0 0.3em 0 0,
+        inset var(--paper-dark) 0 -0.3em 0 0,
+        inset var(--color-accent-dark) 0 -0.7em 0 0;
+      padding-top: 0.3em;
+    }
+
+    .spineTitle {
+      display: block;
+      background: var(--paper-dark);
+      width: 10em;
+      margin: 0 auto;
+      font-size: 0.6em;
+    }
+
+    .green { color: #4b9121; }
+
+    /* Main content area */
+    .linerNotesMainContent {
+      position: relative;
+      height: 12em;
+      background: var(--paper);
+      z-index: 1;
+    }
+
+    .linerNotesMainContent::before {
+      content: '';
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      left: 50%;
+      height: 12em;
+      border-left: var(--color-text) solid 0.1em;
+    }
+
+    .linerNotesMainContent::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 20.5em;
+      border-top: var(--paper-dark) solid 2em;
+      border-right: transparent solid 0.5em;
+    }
+
+    .linerNotesMainContent .side {
+      float: left;
+      position: relative;
+      display: block;
+      width: 50%;
+      padding-left: 0.5em;
+      border-bottom: var(--color-text) solid 0.2em;
+      z-index: 2;
+      font-size: 0.8em;
+      font-weight: 600;
+    }
+
+    .linerNotesMainContentInner {
+      position: absolute;
+      z-index: 100;
+      top: 3em;
+      height: 10em;
+      left: 2em;
+      width: 16em;
+      font-family: var(--font-cursive);
+      color: var(--color-text);
+      transform: rotate(2deg);
+    }
+
+    .linerNotesMainContentInner h1 {
+      font-size: 1.2em;
+      line-height: 1em;
+      margin-bottom: 0.5em;
+    }
+
+    .linerNotesMainContentInner p {
+      font-size: 0.7em;
+      line-height: 1.5em;
+    }
+
+    .linerNotesLyrics {
+      position: absolute;
+      z-index: 100;
+      top: 3em;
+      left: 50%;
+      width: 14em;
+      padding-left: 1em;
+      font-family: var(--font-family);
+      color: var(--color-text);
+      transform: rotate(-1deg);
+    }
+
+    .linerNotesLyrics p {
+      font-size: 0.38em;
+      line-height: 1.6em;
+      font-style: italic;
+    }
+
+    /* Bottom panel */
+    .linerNotesBottom {
+      transform: rotate(180deg);
+      position: relative;
+      z-index: 2;
+      height: 12em;
+      background: var(--paper);
+      box-shadow:
+        inset var(--color-accent-dark) 0 1.5em 0 0,
+        inset var(--color-accent-dark) 0 -1.5em 0 0,
+        inset var(--color-accent) 0 3em 0 0,
+        inset var(--color-accent) 0 -3em 0 0,
+        inset var(--color-text) 0 4.5em 0 0,
+        inset var(--color-text) 0 -4.5em 0 0;
+      padding-top: 1.5em;
+      text-align: center;
+    }
+
+    .linerNotesBottom .black {
+      text-transform: uppercase;
+      font-weight: 600;
+      font-size: 0.4em;
+    }
+
+    .linerNotesBottom .white {
+      color: var(--cassette-cream);
+      font-size: 0.5em;
+    }
+
+    .linerNotesBottom .title {
+      font-weight: 600;
+      font-size: 0.7em;
+      line-height: 2em;
+      padding-bottom: 0.35em;
+    }
+
+    /* ==================== BACK LINK ==================== */
+    .back-link {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      font-size: 0.5rem;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      padding: 0.5rem 1rem;
+      background: rgba(0, 0, 0, 0.03);
+      border-radius: 2px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .back-link:hover {
+      color: var(--color-text);
+      background: rgba(0, 0, 0, 0.02);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .back-link svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 500px) {
+      body {
+        font-size: 1.2em;
+        padding: 1em 1.5em 6em 1.5em;
+      }
+
+      /* Back button not fixed on mobile */
+      .back-link {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin-bottom: 1.5em;
+        width: fit-content;
+      }
+
+      .cassetteOuter {
+        width: 18em;
+        height: 11em;
+        margin-top: 2em;
+      }
+
+      /* Fix tape window overflow on mobile */
+      .window {
+        overflow: hidden;
+      }
+
+      /* Liner notes mobile fixes */
+      .linerNotes {
+        width: 18em;
+        overflow: hidden;
+      }
+
+      /* Hide overflowing info boxes on mobile */
+      .infoBoxes {
+        display: none;
+      }
+
+      /* Show truncated lyrics on mobile */
+      .linerNotesLyrics {
+        left: 50%;
+        top: 2.5em;
+        width: 8em;
+        max-height: 8em;
+        overflow: hidden;
+        padding-left: 0.5em;
+      }
+
+      .linerNotesLyrics p {
+        font-size: 0.44em;
+        line-height: 1.5em;
+      }
+
+      .boxDesc {
+        float: none;
+        text-align: center;
+        padding-top: 0.5em;
+      }
+
+      /* Fix skewed panel alignment */
+      .linerNotesTop {
+        left: 0;
+        transform: rotate(180deg) skewX(8deg);
+      }
+
+      .linerNotesSpine {
+        left: 0;
+        transform: skewX(-8deg) rotate(180deg);
+      }
+
+      .progress {
+        width: 280px;
+      }
+
+      .transport__btn {
+        width: 42px;
+        height: 36px;
+      }
+
+      .transport__btn--play {
+        width: 50px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .teethBox,
+      .reelOne,
+      .reelTwo {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+    back
+  </a>
+
+  <div class="player-container">
+    <!-- Cassette -->
+    <div class="cassetteOuter" id="cassette">
+      <span class="screw screw1"><span class="screwInner"></span></span>
+      <span class="screw screw2"><span class="screwInner"></span></span>
+      <span class="screw screw3"><span class="screwInner"></span></span>
+      <span class="screw screw4"><span class="screwInner"></span></span>
+
+      <div class="stickerOuter">
+        <div class="sticker">
+          <span class="a-side">A</span>
+          <p class="cursive">carrying light</p>
+          <span class="stripe"></span>
+          <span class="c90">NJ-1219</span>
+          <span class="logo">michael bowley®</span>
+          <div class="middle clearfix">
+            <span class="circle one">
+              <span class="teethBox">
+                <span class="teeth"></span>
+                <span class="teeth"></span>
+                <span class="teeth"></span>
+              </span>
+            </span>
+            <div class="window">
+              <span class="reelOne"></span>
+              <span class="reelTwo"></span>
+            </div>
+            <span class="circle two">
+              <span class="teethBox">
+                <span class="teeth"></span>
+                <span class="teeth"></span>
+                <span class="teeth"></span>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cassetteBottom">
+        <span class="screw screw5"><span class="screwInner"></span></span>
+        <span class="bottomShadow">
+          <span class="bottomHoles one"></span>
+          <span class="bottomHoles two"></span>
+          <span class="bottomHoles three"></span>
+        </span>
+        <span class="holes one"></span>
+        <span class="holes two"></span>
+      </div>
+    </div>
+
+    <!-- Transport Controls -->
+    <div class="transport">
+      <button class="transport__btn transport__btn--rewind" id="rewindBtn" title="rewind">
+        <svg viewBox="0 0 24 24">
+          <path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/>
+        </svg>
+      </button>
+      <button class="transport__btn transport__btn--stop" id="stopBtn" title="stop">
+        <svg viewBox="0 0 24 24">
+          <rect x="6" y="6" width="12" height="12"/>
+        </svg>
+      </button>
+      <button class="transport__btn transport__btn--play" id="playBtn" title="play/pause">
+        <svg class="icon-play" viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+        <svg class="icon-pause" viewBox="0 0 24 24">
+          <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+        </svg>
+      </button>
+      <button class="transport__btn transport__btn--ff" id="ffBtn" title="fast forward">
+        <svg viewBox="0 0 24 24">
+          <path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress">
+      <div class="progress__bar" id="progressBar">
+        <div class="progress__fill" id="progressFill"></div>
+      </div>
+      <div class="progress__time">
+        <span id="currentTime">00:00</span>
+        <span id="duration">00:00</span>
+      </div>
+    </div>
+
+    <!-- Folded Liner Notes / J-Card -->
+    <div class="linerNotes">
+      <div class="linerNotesTop clearfix">
+        <span class="boxDesc">michael bowley NJ-1219 60min. @ 1-7/8 ips (2 × 30min.)</span>
+        <div class="infoBoxes clearfix">
+          <span class="box1">Tape Selector</span>
+          <span class="box2">Normal</span>
+          <span class="box3">Bias-Normal<br>EQ-120µS</span>
+          <span class="boxCopyright">©2025 michael bowley</span>
+        </div>
+      </div>
+      <div class="linerNotesSpine"><span class="spineTitle">NJ-<span class="green">1219</span> michael bowley</span></div>
+      <div class="linerNotesMainContent clearfix">
+        <span class="side">A</span>
+        <span class="side">lyrics</span>
+        <div class="linerNotesMainContentInner">
+          <h1>carrying light</h1>
+          <p>Side A: carrying light</p>
+          <p style="margin-top: 1em;">michael bowley<br>new york, 2025</p>
+        </div>
+        <div class="linerNotesLyrics">
+          <p>You make it easy to breathe,<br>
+          Like windows open in spring.<br>
+          All that I carried alone<br>
+          Doesn't mean quite the same thing.<br>
+          You make it easy to breathe—<br>
+          Air in my lungs finds a home.<br>
+          You make it easy to breathe,<br>
+          So I don't have to go it alone.</p>
+        </div>
+      </div>
+      <div class="linerNotesBottom">
+        <p class="black">Dynamic Cassette</p>
+        <p class="white">Precision Cassette Mechanism</p>
+        <p class="title">NJ-<span class="green">1219</span> michael bowley®</p>
+        <p class="black">Low Noise  High Output</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden Audio Element -->
+  <audio id="audio" preload="metadata">
+    <source src="media/carrying-light.mp4" type="audio/mp4">
+    Your browser does not support the audio element.
+  </audio>
+
+  <script>
+    const audio = document.getElementById('audio');
+    const cassette = document.getElementById('cassette');
+    const playBtn = document.getElementById('playBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const rewindBtn = document.getElementById('rewindBtn');
+    const ffBtn = document.getElementById('ffBtn');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    const currentTimeEl = document.getElementById('currentTime');
+    const durationEl = document.getElementById('duration');
+
+    function formatTime(seconds) {
+      if (isNaN(seconds)) return '00:00';
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function updateProgress() {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progressFill.style.width = percent + '%';
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+    }
+
+    playBtn.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play();
+        playBtn.classList.add('is-playing');
+        playBtn.classList.add('is-pressed');
+        stopBtn.classList.remove('is-pressed');
+        cassette.classList.add('is-playing');
+      } else {
+        audio.pause();
+        playBtn.classList.remove('is-playing');
+        playBtn.classList.remove('is-pressed');
+        cassette.classList.remove('is-playing');
+      }
+    });
+
+    stopBtn.addEventListener('click', () => {
+      audio.pause();
+      audio.currentTime = 0;
+      playBtn.classList.remove('is-playing');
+      playBtn.classList.remove('is-pressed');
+      stopBtn.classList.add('is-pressed');
+      cassette.classList.remove('is-playing');
+      updateProgress();
+    });
+
+    rewindBtn.addEventListener('click', () => {
+      audio.currentTime = Math.max(0, audio.currentTime - 10);
+    });
+
+    ffBtn.addEventListener('click', () => {
+      audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+    });
+
+    progressBar.addEventListener('click', (e) => {
+      const rect = progressBar.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      audio.currentTime = percent * audio.duration;
+    });
+
+    audio.addEventListener('timeupdate', updateProgress);
+
+    audio.addEventListener('loadedmetadata', () => {
+      durationEl.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener('ended', () => {
+      playBtn.classList.remove('is-playing');
+      playBtn.classList.remove('is-pressed');
+      stopBtn.classList.add('is-pressed');
+      cassette.classList.remove('is-playing');
+      audio.currentTime = 0;
+      updateProgress();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        playBtn.click();
+      } else if (e.code === 'ArrowLeft') {
+        rewindBtn.click();
+      } else if (e.code === 'ArrowRight') {
+        ffBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>
