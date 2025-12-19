@@ -577,12 +577,15 @@ button {
 /* ==========================================================================
    Gallery Page (Individual)
    ========================================================================== */
+/* Teenage Engineering-inspired: Boxed info modules, left-aligned */
 .gallery-header {
   padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
-  max-width: 800px;
+  max-width: var(--max-width);
   margin: 0 auto;
-  text-align: center;
-  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  align-items: flex-start;
 }
 
 /* Back to Work Button - Bottom of gallery */
@@ -649,11 +652,21 @@ button {
   position: relative;
 }
 
-/* Cassette futurism: Gallery header typography */
+/* TE-inspired: Each header element is a discrete inset module */
+.gallery-header__title,
+.gallery-header__meta,
+.gallery-header__description {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 2px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin: 0;
+}
+
 .gallery-header__title {
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-lg);
   font-weight: 500;
-  margin-bottom: var(--spacing-sm);
   letter-spacing: 0.02em;
   text-transform: lowercase;
 }
@@ -661,16 +674,15 @@ button {
 .gallery-header__meta {
   color: var(--color-text-muted);
   font-size: var(--font-size-xs);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: lowercase;
-  margin-bottom: var(--spacing-md);
 }
 
 .gallery-header__description {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
-  max-width: 600px;
-  margin: 0 auto;
+  flex-basis: 100%;
+  max-width: 500px;
 }
 
 .gallery-grid {
@@ -681,7 +693,7 @@ button {
   margin: 0 auto;
 }
 
-/* Cassette futurism: Gallery images - inset at rest, lift on hover */
+/* Gallery images - tactile lift on hover only */
 .gallery-grid__item {
   break-inside: avoid;
   margin-bottom: var(--spacing-sm);
@@ -689,7 +701,6 @@ button {
   overflow: visible;
   background: #f4f4f2;
   border-radius: 2px;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -1319,6 +1330,18 @@ button {
   .gallery-grid__item:hover {
     transform: none;
     box-shadow: none;
+  }
+
+  /* Gallery header: stack boxes vertically on mobile */
+  .gallery-header {
+    flex-direction: column;
+    padding: var(--spacing-md);
+  }
+
+  .gallery-header__title,
+  .gallery-header__meta,
+  .gallery-header__description {
+    width: 100%;
   }
 
   .galleries {
