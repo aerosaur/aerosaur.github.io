@@ -312,7 +312,6 @@
       margin-left: -0.85em;
       width: 1.7em;
       height: 1.7em;
-      transition: transform var(--transition-smooth);
     }
 
     .teeth {
@@ -555,23 +554,7 @@
 
     .bottomHoles.three { right: 0.5em; }
 
-    /* Playing Animation */
-    .cassetteOuter.is-playing .teethBox {
-      -webkit-animation: spin-teeth 1s linear infinite;
-      animation: spin-teeth 1s linear infinite;
-      -webkit-transition: none;
-      transition: none;
-    }
-
-    @-webkit-keyframes spin-teeth {
-      from { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
-      to { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
-    }
-
-    @keyframes spin-teeth {
-      from { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
-      to { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
-    }
+    /* Teeth rotation now handled via JavaScript for iOS compatibility */
 
     /* ==================== TRANSPORT CONTROLS ==================== */
     .transport {
@@ -1036,14 +1019,7 @@
       }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      .teethBox,
-      .reelOne,
-      .reelTwo {
-        animation: none !important;
-        transition: none !important;
-      }
-    }
+    /* prefers-reduced-motion handled in JavaScript */
   </style>
 </head>
 <body>
@@ -1201,10 +1177,12 @@
     const durationEl = document.getElementById('duration');
     const reelOne = document.querySelector('.reelOne');
     const reelTwo = document.querySelector('.reelTwo');
+    const teethBoxes = document.querySelectorAll('.teethBox');
 
     // Known duration fallback for iOS (4:20 = 260 seconds)
     const KNOWN_DURATION = 260;
     let animationId = null;
+    let teethRotation = 0;
 
     function getDuration() {
       // Use actual duration if available, otherwise fallback
@@ -1247,10 +1225,20 @@
       updateReels(progress);
     }
 
+    // Rotate teeth via JS (more reliable than CSS animation on iOS)
+    function updateTeeth() {
+      teethRotation = (teethRotation + 6) % 360; // 6 degrees per frame ≈ 1 rotation per second at 60fps
+      teethBoxes.forEach(box => {
+        box.style.transform = 'rotate(' + teethRotation + 'deg)';
+        box.style.webkitTransform = 'rotate(' + teethRotation + 'deg)';
+      });
+    }
+
     // Animation loop for iOS (timeupdate can be unreliable)
     function animationLoop() {
       if (!audio.paused) {
         updateProgress();
+        updateTeeth();
         animationId = requestAnimationFrame(animationLoop);
       }
     }
