@@ -317,10 +317,11 @@ button {
   break-inside: avoid;
   margin-bottom: var(--spacing-sm);
   aspect-ratio: auto;
-  overflow: hidden;
+  overflow: visible;
   background: transparent;
   position: relative;
   counter-increment: gallery-index;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Cassette futurism: Index numbers like track listings */
@@ -347,8 +348,10 @@ button {
 }
 
 .galleries .gallery-card:hover {
-  transform: translateY(-4px);
-  box-shadow: none;
+  transform: translateY(-6px);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* Dieter Rams: Archive images - inset effect */
@@ -452,7 +455,7 @@ button {
   overflow: hidden;
   background: #f4f4f2;
   animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-  transition: transform var(--transition-smooth);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .gallery-card:nth-child(1) { animation-delay: 0.1s; }
@@ -466,8 +469,12 @@ button {
 .gallery-card:nth-child(9) { animation-delay: 0.5s; }
 .gallery-card:nth-child(10) { animation-delay: 0.55s; }
 
+/* Tactile hover: card lifts up with drop shadow like physical button */
 .gallery-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* Dieter Rams: Inset image effect - images appear pressed into surface */
