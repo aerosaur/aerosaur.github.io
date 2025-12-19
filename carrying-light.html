@@ -107,6 +107,11 @@
       padding: 1em;
       border-top: rgba(255,255,255,0.3) solid 0.1em;
       border-bottom: var(--cassette-body-dark) solid 0.1em;
+      /* Fix iOS Safari rendering artifacts during animation */
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
     }
 
     /* Side depth edges - no individual shadows */
