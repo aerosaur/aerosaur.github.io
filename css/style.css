@@ -151,23 +151,27 @@ button {
   transition: color var(--transition-fast);
   letter-spacing: 0.05em;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
+/* Dieter Rams: Orange indicator dot instead of underline */
 .nav__link::after {
   content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background: var(--color-text);
-  transform: scaleX(0);
-  transition: transform var(--transition-base);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 
 .nav__link:hover::after,
 .nav__link--active::after {
-  transform: scaleX(1);
+  opacity: 0.9;
+  transform: scale(1);
 }
 
 .nav__link:hover,
@@ -329,7 +333,7 @@ button {
   font-weight: 500;
   letter-spacing: 0.05em;
   color: var(--color-text);
-  background: rgba(250, 250, 248, 0.9);
+  background: rgba(250, 250, 248, 0.5);
   padding: 2px 6px;
   border-radius: 2px;
   z-index: 2;
@@ -339,7 +343,7 @@ button {
 }
 
 .galleries .gallery-card:hover::before {
-  background: rgba(250, 250, 248, 0.95);
+  background: rgba(250, 250, 248, 0.7);
 }
 
 .galleries .gallery-card:hover {
@@ -347,11 +351,42 @@ button {
   box-shadow: none;
 }
 
+/* Dieter Rams: Archive images - inset effect */
 .galleries .gallery-card__image {
   position: relative;
   width: 100%;
   height: auto;
   overflow: hidden;
+}
+
+/* Inset shadow overlay - recessed display effect */
+.galleries .gallery-card__image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 3px rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  /* Subtle vignette for depth */
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.04) 100%
+  );
+  pointer-events: none;
+  transition: opacity var(--transition-smooth);
+}
+
+/* On hover: hide inset, show outer shadow */
+.galleries .gallery-card:hover .gallery-card__image::after {
+  opacity: 0;
+}
+
+.galleries .gallery-card:hover .gallery-card__image {
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.15),
+    0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .galleries .gallery-card__image img {
@@ -391,7 +426,7 @@ button {
 
 .galleries .gallery-card__info .gallery-card__title {
   color: var(--color-text);
-  font-size: var(--font-size-sm);
+  font-size: 0.75rem;
   font-weight: 500;
 }
 
@@ -435,28 +470,40 @@ button {
   transform: translateY(-4px);
 }
 
-/* Cassette futurism: Accent line for all cards (Featured + Archive) */
-.gallery-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--color-accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--transition-smooth);
-  z-index: 2;
-}
-
-.gallery-card:hover::after {
-  transform: scaleX(1);
-}
-
+/* Dieter Rams: Inset image effect - images appear pressed into surface */
 .gallery-card__image {
   position: absolute;
   inset: 0;
+}
+
+/* Inset shadow overlay - recessed display effect */
+.gallery-card__image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 3px rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  /* Subtle vignette for depth */
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.04) 100%
+  );
+  pointer-events: none;
+  transition: opacity var(--transition-smooth);
+}
+
+/* On hover: hide inset, show outer shadow on container */
+.gallery-card:hover .gallery-card__image::after {
+  opacity: 0;
+}
+
+.gallery-card:hover .gallery-card__image {
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.15),
+    0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .gallery-card__image img {
@@ -492,7 +539,7 @@ button {
 }
 
 .gallery-card__title {
-  font-size: var(--font-size-sm);
+  font-size: 0.75rem;
   font-weight: 500;
 }
 
@@ -537,58 +584,60 @@ button {
   padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-2xl);
 }
 
+/* Cassette futurism: Physical button styling - inset at rest, raises on hover */
 .btn-back {
   position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-sm);
-  padding: var(--spacing-md) var(--spacing-xl);
-  background: white;
-  color: var(--color-text);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   font-weight: 500;
   letter-spacing: 0.08em;
-  border: 1px solid var(--color-border);
+  border: none;
+  border-radius: 2px;
   cursor: pointer;
-  overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 1;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Soft fill effect */
+/* Hover: button raises up */
 .btn-back:hover {
-  background-color: #edede9;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(28, 28, 26, 0.08);
+  background: rgba(0, 0, 0, 0.02);
+  color: var(--color-text);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
 }
 
-/* Active press state */
+/* Active: button presses deeper */
 .btn-back:active {
-  transform: translateY(0) scale(0.98);
-  box-shadow: 0 2px 6px rgba(28, 28, 26, 0.06);
+  background: rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12);
+  transform: translateY(0);
   transition-duration: 0.1s;
 }
 
 /* Focus ring for accessibility */
 .btn-back:focus-visible {
-  outline: 2px solid var(--color-text);
-  outline-offset: 3px;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 /* Arrow animation */
 .btn-back svg {
-  width: 18px;
-  height: 18px;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .btn-back:hover svg {
-  transform: translateX(-4px);
+  transform: translateX(-3px);
 }
 
-/* Text wrapper for potential future effects */
 .btn-back span {
   position: relative;
 }
@@ -804,11 +853,30 @@ button {
   filter: grayscale(0%) contrast(1);
 }
 
+/* Cassette futurism: Page headings as embossed label plates */
 .about__content h1 {
-  font-size: var(--font-size-2xl);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
   font-weight: 500;
-  margin-bottom: var(--spacing-md);
-  letter-spacing: -0.02em;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 2px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+  margin-bottom: var(--spacing-lg);
+}
+
+.about__content h1::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  opacity: 0.8;
+  box-shadow: 0 0 4px var(--color-accent-muted);
 }
 
 .about__content p {
@@ -819,11 +887,29 @@ button {
 }
 
 .about__heading {
-  font-size: var(--font-size-xl);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
   font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 2px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
   margin-top: var(--spacing-xl);
-  margin-bottom: var(--spacing-md);
-  letter-spacing: -0.02em;
+  margin-bottom: var(--spacing-lg);
+}
+
+.about__heading::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  opacity: 0.8;
+  box-shadow: 0 0 4px var(--color-accent-muted);
 }
 
 .about__email {
@@ -844,54 +930,57 @@ button {
   flex-wrap: wrap;
 }
 
+/* Cassette futurism: Social buttons - inset at rest, raises on hover */
 .about__social a {
   position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-sm);
-  padding: var(--spacing-md) var(--spacing-xl);
-  background: white;
-  color: var(--color-text);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   font-weight: 500;
   letter-spacing: 0.08em;
-  border: 1px solid var(--color-border);
-  overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 1;
+  border: none;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Soft fill effect */
+/* Hover: button raises up */
 .about__social a:hover {
-  background-color: #edede9;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(28, 28, 26, 0.08);
+  background: rgba(0, 0, 0, 0.02);
+  color: var(--color-text);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
 }
 
-/* Active press state */
+/* Active: button presses deeper */
 .about__social a:active {
-  transform: translateY(0) scale(0.98);
-  box-shadow: 0 2px 6px rgba(28, 28, 26, 0.06);
+  background: rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12);
+  transform: translateY(0);
   transition-duration: 0.1s;
 }
 
 /* Focus ring for accessibility */
 .about__social a:focus-visible {
-  outline: 2px solid var(--color-text);
-  outline-offset: 3px;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 .about__social svg {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   fill: currentColor;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .about__social a:hover svg {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 /* ==========================================================================
@@ -904,10 +993,28 @@ button {
 }
 
 .contact h1 {
-  font-size: var(--font-size-2xl);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
   font-weight: 500;
-  margin-bottom: var(--spacing-sm);
-  letter-spacing: -0.02em;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 2px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+  margin-bottom: var(--spacing-lg);
+}
+
+.contact h1::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  opacity: 0.8;
+  box-shadow: 0 0 4px var(--color-accent-muted);
 }
 
 .contact__intro {
@@ -966,57 +1073,59 @@ button {
   gap: var(--spacing-md);
 }
 
-/* Submit button with soft fill + lift */
+/* Cassette futurism: Submit button - inset at rest, raises on hover */
 .btn-submit {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
-  padding: var(--spacing-md) var(--spacing-xl);
-  background: white;
-  color: var(--color-text);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   font-weight: 500;
   letter-spacing: 0.08em;
-  border: 1px solid var(--color-border);
+  border: none;
+  border-radius: 2px;
   cursor: pointer;
-  overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 1;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   margin-top: var(--spacing-sm);
 }
 
-/* Soft fill effect */
+/* Hover: button raises up */
 .btn-submit:hover {
-  background-color: #edede9;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(28, 28, 26, 0.08);
+  background: rgba(0, 0, 0, 0.02);
+  color: var(--color-text);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
 }
 
-/* Active press state */
+/* Active: button presses deeper */
 .btn-submit:active {
-  transform: translateY(0) scale(0.98);
-  box-shadow: 0 2px 6px rgba(28, 28, 26, 0.06);
+  background: rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12);
+  transform: translateY(0);
   transition-duration: 0.1s;
 }
 
 /* Focus ring for accessibility */
 .btn-submit:focus-visible {
-  outline: 2px solid var(--color-text);
-  outline-offset: 3px;
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 .btn-submit svg {
-  width: 18px;
-  height: 18px;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .btn-submit:hover svg {
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
 
 .btn-submit span {
@@ -1135,6 +1244,15 @@ button {
     font-size: var(--font-size-sm);
   }
 
+  /* Reduce section spacing on mobile */
+  .featured {
+    padding: var(--spacing-lg) 0 var(--spacing-sm);
+  }
+
+  .archive__header {
+    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-sm);
+  }
+
   .featured__scroll .gallery-card {
     flex: 0 0 85vw;
   }
@@ -1180,16 +1298,7 @@ button {
     display: none;
   }
 
-  /* Persistent orange accent line on mobile */
-  .galleries .gallery-card::after {
-    position: relative;
-    display: block;
-    transform: scaleX(1);
-    height: 2px;
-    margin-top: 0;
-  }
-
-  /* Mobile: Banner below the image */
+  /* Mobile: Plain text below the image, keep inset effect */
   .galleries .gallery-card__info {
     position: relative;
     display: flex;
@@ -1198,8 +1307,10 @@ button {
     width: 100%;
     left: 0;
     right: 0;
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: var(--spacing-md) 0 var(--spacing-sm);
     font-size: 0.75rem;
+    background: transparent;
+    border-bottom: 1px solid var(--color-border);
   }
 
   .galleries .gallery-card__info .gallery-card__title {
@@ -1244,6 +1355,7 @@ button {
     width: 100%;
   }
 
+  /* Mobile featured cards: plain text below image, no separator */
   .featured__scroll .gallery-card--mobile .gallery-card__info {
     position: relative;
     display: flex;
@@ -1252,8 +1364,9 @@ button {
     width: 100%;
     left: 0;
     right: 0;
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: var(--spacing-md) 0 var(--spacing-sm);
     font-size: 0.75rem;
+    background: transparent;
   }
 
   .featured__scroll .gallery-card--mobile .gallery-card__info .gallery-card__title {
@@ -1262,15 +1375,6 @@ button {
 
   .featured__scroll .gallery-card--mobile .gallery-card__info .gallery-card__meta {
     font-size: 0.75rem;
-  }
-
-  /* Persistent orange accent line for Featured section on mobile */
-  .featured__scroll .gallery-card--mobile::after {
-    position: relative;
-    display: block;
-    transform: scaleX(1);
-    height: 2px;
-    margin-top: 0;
   }
 }
 
