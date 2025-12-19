@@ -1194,8 +1194,17 @@
     const reelOne = document.querySelector('.reelOne');
     const reelTwo = document.querySelector('.reelTwo');
 
+    // Known duration fallback for iOS (4:20 = 260 seconds)
+    const KNOWN_DURATION = 260;
+    let animationId = null;
+
+    function getDuration() {
+      // Use actual duration if available, otherwise fallback
+      return (audio.duration && isFinite(audio.duration)) ? audio.duration : KNOWN_DURATION;
+    }
+
     function formatTime(seconds) {
-      if (isNaN(seconds)) return '00:00';
+      if (isNaN(seconds) || !isFinite(seconds)) return '00:00';
       const mins = Math.floor(seconds / 60);
       const secs = Math.floor(seconds % 60);
       return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
@@ -1205,10 +1214,11 @@
       // progress: 0 = start of tape, 1 = end of tape
       // reelOne (supply reel): shrinks from 9em to 8em as tape plays
       // reelTwo (take-up reel): grows from 6em to 7em as tape plays
-      const reelOneSize = 9 - progress;          // 9em → 8em
-      const reelOneMargin = -4.5 + (0.5 * progress);  // -4.5em → -4em
-      const reelTwoSize = 6 + progress;          // 6em → 7em
-      const reelTwoMargin = -3 - (0.5 * progress);    // -3em → -3.5em
+      const clampedProgress = Math.max(0, Math.min(1, progress));
+      const reelOneSize = 9 - clampedProgress;
+      const reelOneMargin = -4.5 + (0.5 * clampedProgress);
+      const reelTwoSize = 6 + clampedProgress;
+      const reelTwoMargin = -3 - (0.5 * clampedProgress);
 
       reelOne.style.width = reelOneSize + 'em';
       reelOne.style.height = reelOneSize + 'em';
@@ -1222,38 +1232,65 @@
     }
 
     function updateProgress() {
-      const progress = audio.currentTime / audio.duration;
+      const duration = getDuration();
+      const progress = audio.currentTime / duration;
       progressFill.style.width = (progress * 100) + '%';
       currentTimeEl.textContent = formatTime(audio.currentTime);
+      updateReels(progress);
+    }
 
-      // Sync reel sizes with playback position
-      if (!isNaN(progress)) {
-        updateReels(progress);
+    // Animation loop for iOS (timeupdate can be unreliable)
+    function animationLoop() {
+      if (!audio.paused) {
+        updateProgress();
+        animationId = requestAnimationFrame(animationLoop);
+      }
+    }
+
+    function startPlayback() {
+      playBtn.classList.add('is-playing');
+      playBtn.classList.add('is-pressed');
+      stopBtn.classList.remove('is-pressed');
+      cassette.classList.add('is-playing');
+      // Start animation loop as backup for iOS
+      if (animationId) cancelAnimationFrame(animationId);
+      animationLoop();
+    }
+
+    function stopPlayback() {
+      playBtn.classList.remove('is-playing');
+      playBtn.classList.remove('is-pressed');
+      cassette.classList.remove('is-playing');
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
       }
     }
 
     playBtn.addEventListener('click', () => {
       if (audio.paused) {
-        audio.play();
-        playBtn.classList.add('is-playing');
-        playBtn.classList.add('is-pressed');
-        stopBtn.classList.remove('is-pressed');
-        cassette.classList.add('is-playing');
+        const playPromise = audio.play();
+        // Handle play promise for iOS
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            startPlayback();
+          }).catch((error) => {
+            console.log('Playback prevented:', error);
+          });
+        } else {
+          startPlayback();
+        }
       } else {
         audio.pause();
-        playBtn.classList.remove('is-playing');
-        playBtn.classList.remove('is-pressed');
-        cassette.classList.remove('is-playing');
+        stopPlayback();
       }
     });
 
     stopBtn.addEventListener('click', () => {
       audio.pause();
       audio.currentTime = 0;
-      playBtn.classList.remove('is-playing');
-      playBtn.classList.remove('is-pressed');
+      stopPlayback();
       stopBtn.classList.add('is-pressed');
-      cassette.classList.remove('is-playing');
       updateProgress();
     });
 
@@ -1274,14 +1311,16 @@
     audio.addEventListener('timeupdate', updateProgress);
 
     audio.addEventListener('loadedmetadata', () => {
-      durationEl.textContent = formatTime(audio.duration);
+      durationEl.textContent = formatTime(getDuration());
     });
 
+    // Initialize on page load
+    updateReels(0);
+    durationEl.textContent = formatTime(KNOWN_DURATION);
+
     audio.addEventListener('ended', () => {
-      playBtn.classList.remove('is-playing');
-      playBtn.classList.remove('is-pressed');
+      stopPlayback();
       stopBtn.classList.add('is-pressed');
-      cassette.classList.remove('is-playing');
       audio.currentTime = 0;
       updateProgress();
     });
