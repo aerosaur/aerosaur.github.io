@@ -159,7 +159,10 @@ class Lightbox {
       img.src = image.src;
       img.alt = image.alt;
     }
-    counter.textContent = `${this.currentIndex + 1} / ${this.images.length}`;
+    // Cassette futurism: Technical readout format with leading zeros and pipe separator
+    const current = String(this.currentIndex + 1).padStart(2, '0');
+    const total = String(this.images.length).padStart(2, '0');
+    counter.textContent = `${current} │ ${total}`;
   }
 }
 
