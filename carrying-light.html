@@ -115,6 +115,14 @@
     }
 
     /* Side depth edges - no individual shadows */
+    .cassetteOuter::before,
+    .cassetteOuter::after {
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+
     .cassetteOuter::before {
       position: absolute;
       bottom: 1em;
