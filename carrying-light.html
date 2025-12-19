@@ -557,12 +557,20 @@
 
     /* Playing Animation */
     .cassetteOuter.is-playing .teethBox {
+      -webkit-animation: spin-teeth 1s linear infinite;
       animation: spin-teeth 1s linear infinite;
+      -webkit-transition: none;
+      transition: none;
+    }
+
+    @-webkit-keyframes spin-teeth {
+      from { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+      to { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
     }
 
     @keyframes spin-teeth {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      from { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+      to { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
     }
 
     /* ==================== TRANSPORT CONTROLS ==================== */
