@@ -1269,16 +1269,16 @@
 
     playBtn.addEventListener('click', () => {
       if (audio.paused) {
+        // Update UI immediately for responsiveness
+        startPlayback();
+        // Then try to play audio
         const playPromise = audio.play();
-        // Handle play promise for iOS
         if (playPromise !== undefined) {
-          playPromise.then(() => {
-            startPlayback();
-          }).catch((error) => {
+          playPromise.catch((error) => {
+            // If playback fails, revert UI
             console.log('Playback prevented:', error);
+            stopPlayback();
           });
-        } else {
-          startPlayback();
         }
       } else {
         audio.pause();
