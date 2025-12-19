@@ -1183,6 +1183,7 @@
     const KNOWN_DURATION = 260;
     let animationId = null;
     let teethRotation = 0;
+    let lastFrameTime = 0;
     let isAnimating = false;  // Separate flag - don't rely on audio.paused
 
     function getDuration() {
@@ -1227,8 +1228,11 @@
     }
 
     // Rotate teeth via JS (more reliable than CSS animation on iOS)
-    function updateTeeth() {
-      teethRotation = (teethRotation + 6) % 360; // 6 degrees per frame ≈ 1 rotation per second at 60fps
+    // Uses delta time for consistent speed across all frame rates
+    function updateTeeth(deltaTime) {
+      // 360 degrees per second (1 rotation per second)
+      const degreesPerMs = 360 / 1000;
+      teethRotation = (teethRotation + degreesPerMs * deltaTime) % 360;
       teethBoxes.forEach(box => {
         box.style.transform = 'rotate(' + teethRotation + 'deg)';
         box.style.webkitTransform = 'rotate(' + teethRotation + 'deg)';
@@ -1237,23 +1241,26 @@
 
     // Animation loop - uses isAnimating flag, not audio.paused
     // (audio.paused can be unreliable, especially on iOS)
-    function animationLoop() {
+    function animationLoop(timestamp) {
       if (isAnimating) {
+        const deltaTime = lastFrameTime ? timestamp - lastFrameTime : 16;
+        lastFrameTime = timestamp;
         updateProgress();
-        updateTeeth();
+        updateTeeth(deltaTime);
         animationId = requestAnimationFrame(animationLoop);
       }
     }
 
     function startPlayback() {
       isAnimating = true;
+      lastFrameTime = 0;  // Reset so first frame gets clean delta
       playBtn.classList.add('is-playing');
       playBtn.classList.add('is-pressed');
       stopBtn.classList.remove('is-pressed');
       cassette.classList.add('is-playing');
       // Start animation loop
       if (animationId) cancelAnimationFrame(animationId);
-      animationLoop();
+      animationId = requestAnimationFrame(animationLoop);
     }
 
     function stopPlayback() {
