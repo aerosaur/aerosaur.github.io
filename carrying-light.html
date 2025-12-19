@@ -1183,6 +1183,7 @@
     const KNOWN_DURATION = 260;
     let animationId = null;
     let teethRotation = 0;
+    let isAnimating = false;  // Separate flag - don't rely on audio.paused
 
     function getDuration() {
       // Use actual duration if available, otherwise fallback
@@ -1234,9 +1235,10 @@
       });
     }
 
-    // Animation loop for iOS (timeupdate can be unreliable)
+    // Animation loop - uses isAnimating flag, not audio.paused
+    // (audio.paused can be unreliable, especially on iOS)
     function animationLoop() {
-      if (!audio.paused) {
+      if (isAnimating) {
         updateProgress();
         updateTeeth();
         animationId = requestAnimationFrame(animationLoop);
@@ -1244,16 +1246,18 @@
     }
 
     function startPlayback() {
+      isAnimating = true;
       playBtn.classList.add('is-playing');
       playBtn.classList.add('is-pressed');
       stopBtn.classList.remove('is-pressed');
       cassette.classList.add('is-playing');
-      // Start animation loop as backup for iOS
+      // Start animation loop
       if (animationId) cancelAnimationFrame(animationId);
       animationLoop();
     }
 
     function stopPlayback() {
+      isAnimating = false;
       playBtn.classList.remove('is-playing');
       playBtn.classList.remove('is-pressed');
       cassette.classList.remove('is-playing');
