@@ -1164,8 +1164,15 @@
       }
 
       .scroll-lyrics__line {
-        font-size: 0.95rem;
+        font-size: 0.7rem;
         line-height: 1.9;
+        /* Show visible by default on mobile - skip animation */
+        opacity: 1;
+        transform: none;
+      }
+
+      .scroll-lyrics__label {
+        font-size: 0.5rem;
       }
 
       .scroll-lyrics__section {
