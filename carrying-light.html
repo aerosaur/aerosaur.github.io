@@ -1126,27 +1126,42 @@
       text-transform: lowercase;
     }
 
+    @-webkit-keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 20px, 0);
+        transform: translate3d(0, 20px, 0);
+      }
+      to {
+        opacity: 1;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+      }
+    }
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 20px, 0);
+        transform: translate3d(0, 20px, 0);
+      }
+      to {
+        opacity: 1;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
     .scroll-lyrics__line {
       font-family: var(--font-family);
       font-size: 1.1rem;
       line-height: 2;
       color: var(--color-text);
       opacity: 0;
-      /* Use translate3d to force GPU acceleration on iOS */
-      -webkit-transform: translate3d(0, 20px, 0);
-      transform: translate3d(0, 20px, 0);
-      -webkit-transition: opacity 0.6s ease, -webkit-transform 0.6s ease;
-      transition: opacity 0.6s ease, transform 0.6s ease;
-      /* Hint to browser for smoother animation */
-      will-change: transform, opacity;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
     }
 
     .scroll-lyrics__line.is-visible {
-      opacity: 1;
-      -webkit-transform: translate3d(0, 0, 0);
-      transform: translate3d(0, 0, 0);
+      -webkit-animation: fadeSlideUp 0.6s ease forwards;
+      animation: fadeSlideUp 0.6s ease forwards;
     }
 
     .scroll-lyrics__line--em {
@@ -1155,15 +1170,15 @@
     }
 
     /* Stagger delays for lines */
-    .scroll-lyrics__line:nth-child(2) { transition-delay: 0.05s; }
-    .scroll-lyrics__line:nth-child(3) { transition-delay: 0.1s; }
-    .scroll-lyrics__line:nth-child(4) { transition-delay: 0.15s; }
-    .scroll-lyrics__line:nth-child(5) { transition-delay: 0.2s; }
-    .scroll-lyrics__line:nth-child(6) { transition-delay: 0.25s; }
-    .scroll-lyrics__line:nth-child(7) { transition-delay: 0.3s; }
-    .scroll-lyrics__line:nth-child(8) { transition-delay: 0.35s; }
-    .scroll-lyrics__line:nth-child(9) { transition-delay: 0.4s; }
-    .scroll-lyrics__line:nth-child(10) { transition-delay: 0.45s; }
+    .scroll-lyrics__line:nth-child(2) { -webkit-animation-delay: 0.05s; animation-delay: 0.05s; }
+    .scroll-lyrics__line:nth-child(3) { -webkit-animation-delay: 0.1s; animation-delay: 0.1s; }
+    .scroll-lyrics__line:nth-child(4) { -webkit-animation-delay: 0.15s; animation-delay: 0.15s; }
+    .scroll-lyrics__line:nth-child(5) { -webkit-animation-delay: 0.2s; animation-delay: 0.2s; }
+    .scroll-lyrics__line:nth-child(6) { -webkit-animation-delay: 0.25s; animation-delay: 0.25s; }
+    .scroll-lyrics__line:nth-child(7) { -webkit-animation-delay: 0.3s; animation-delay: 0.3s; }
+    .scroll-lyrics__line:nth-child(8) { -webkit-animation-delay: 0.35s; animation-delay: 0.35s; }
+    .scroll-lyrics__line:nth-child(9) { -webkit-animation-delay: 0.4s; animation-delay: 0.4s; }
+    .scroll-lyrics__line:nth-child(10) { -webkit-animation-delay: 0.45s; animation-delay: 0.45s; }
 
     @media (max-width: 500px) {
       .scroll-lyrics {
@@ -1189,8 +1204,8 @@
     @media (prefers-reduced-motion: reduce) {
       .scroll-lyrics__line {
         opacity: 1;
-        transform: none;
-        transition: none;
+        -webkit-animation: none;
+        animation: none;
       }
     }
   </style>
