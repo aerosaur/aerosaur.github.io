@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>yahtzee scorecard</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #fafaf8;
+      --color-text: #1c1c1a;
+      --color-text-muted: #6b6b66;
+      --color-border: #e8e8e4;
+      --color-accent: #D35400;
+      --color-accent-dark: #b34700;
+      --color-accent-muted: rgba(211, 84, 0, 0.15);
+      --font-family: 'JetBrains Mono', monospace;
+      --transition-fast: 150ms ease;
+      --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      background: var(--color-bg);
+    }
+
+    body {
+      font-family: var(--font-family);
+      font-size: 0.875rem;
+      font-weight: 400;
+      line-height: 1.4;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      -webkit-font-smoothing: antialiased;
+      padding: 1.5rem;
+      padding-bottom: 4rem;
+    }
+
+    /* Subtle grain texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* ==================== HEADER ==================== */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .page-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .page-title::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-accent);
+    }
+
+    .back-link {
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      padding: 0.5rem 1rem;
+      background: rgba(0, 0, 0, 0.03);
+      border-radius: 2px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .back-link:hover {
+      color: var(--color-text);
+      background: rgba(0, 0, 0, 0.02);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .back-link svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ==================== PLAYER CONTROLS ==================== */
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: var(--font-family);
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      letter-spacing: 0.05em;
+      padding: 0.6rem 1rem;
+      background: rgba(0, 0, 0, 0.03);
+      border: none;
+      border-radius: 2px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .btn:hover {
+      color: var(--color-text);
+      background: rgba(0, 0, 0, 0.02);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn--accent {
+      background: var(--color-accent);
+      color: white;
+      box-shadow: inset 0 -2px 0 var(--color-accent-dark), inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+
+    .btn--accent:hover {
+      background: #e25d00;
+      color: white;
+    }
+
+    .btn--danger {
+      color: #c0392b;
+    }
+
+    .btn--danger:hover {
+      background: rgba(192, 57, 43, 0.1);
+      color: #c0392b;
+    }
+
+    /* ==================== SCORECARD ==================== */
+    .scorecard-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .scorecard {
+      min-width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow:
+        inset 0 0 0 1px var(--color-border),
+        0 4px 12px rgba(0, 0, 0, 0.06);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .scorecard th,
+    .scorecard td {
+      padding: 0.6rem 0.5rem;
+      text-align: center;
+      border: 1px solid var(--color-border);
+      vertical-align: middle;
+    }
+
+    .scorecard th {
+      background: rgba(0, 0, 0, 0.02);
+      font-weight: 500;
+      font-size: 0.7rem;
+      letter-spacing: 0.03em;
+    }
+
+    .scorecard td {
+      font-size: 0.8rem;
+    }
+
+    .scorecard__category {
+      text-align: left !important;
+      font-weight: 500;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      padding-left: 0.75rem !important;
+    }
+
+    .scorecard__hint {
+      font-size: 0.6rem;
+      color: var(--color-text-muted);
+      font-weight: 400;
+      display: block;
+      margin-top: 0.15rem;
+    }
+
+    .scorecard__section-header {
+      background: var(--color-text) !important;
+      color: var(--color-bg);
+      font-weight: 600;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: lowercase;
+    }
+
+    .scorecard__subtotal {
+      background: rgba(0, 0, 0, 0.04);
+      font-weight: 600;
+    }
+
+    .scorecard__bonus {
+      background: var(--color-accent-muted);
+    }
+
+    .scorecard__grand-total {
+      background: var(--color-accent);
+      font-weight: 600;
+    }
+
+    .scorecard__grand-total td {
+      color: white;
+    }
+
+    .scorecard__grand-total .score-calculated {
+      color: white;
+    }
+
+    /* Player name inputs */
+    .player-name {
+      width: 100%;
+      min-width: 60px;
+      max-width: 100px;
+      padding: 0.3rem;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      background: transparent;
+      font-family: var(--font-family);
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-align: center;
+      color: var(--color-text);
+      transition: all var(--transition-fast);
+    }
+
+    .player-name:hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .player-name:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      background: white;
+    }
+
+    /* Score inputs (upper section + variable lower) */
+    .score-input {
+      width: 100%;
+      max-width: 50px;
+      padding: 0.4rem;
+      border: 1px solid var(--color-border);
+      border-radius: 2px;
+      background: rgba(0, 0, 0, 0.02);
+      font-family: var(--font-family);
+      font-size: 0.8rem;
+      text-align: center;
+      color: var(--color-text);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+      transition: all var(--transition-fast);
+    }
+
+    .score-input:hover {
+      border-color: var(--color-text-muted);
+    }
+
+    .score-input:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      background: white;
+      box-shadow: 0 0 0 2px var(--color-accent-muted);
+    }
+
+    .score-input.has-value {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: white;
+      font-weight: 600;
+    }
+
+    .score-input.has-value:focus {
+      background: var(--color-accent);
+      box-shadow: 0 0 0 2px var(--color-accent-muted);
+    }
+
+    .score-input.is-zero {
+      background: #4a4a4a;
+      border-color: #4a4a4a;
+      color: white;
+      font-weight: 600;
+      text-decoration: line-through;
+    }
+
+    .score-input::-webkit-inner-spin-button,
+    .score-input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .score-input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    /* Fixed score buttons (tap to toggle) */
+    .score-btn {
+      width: 100%;
+      max-width: 50px;
+      padding: 0.5rem 0.3rem;
+      border: 1px solid var(--color-border);
+      border-radius: 2px;
+      background: rgba(0, 0, 0, 0.02);
+      font-family: var(--font-family);
+      font-size: 0.8rem;
+      text-align: center;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+      transition: all var(--transition-fast);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .score-btn:hover {
+      border-color: var(--color-accent);
+      color: var(--color-text);
+    }
+
+    .score-btn.is-active {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: white;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15);
+    }
+
+    .score-btn.is-zero {
+      background: #4a4a4a;
+      border-color: #4a4a4a;
+      color: white;
+      text-decoration: line-through;
+    }
+
+    /* Calculated values */
+    .score-calculated {
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .score-calculated.has-bonus {
+      color: var(--color-accent);
+    }
+
+    /* Yahtzee bonus counter */
+    .yahtzee-bonus-counter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+    }
+
+    .yahtzee-bonus-btn {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--color-border);
+      border-radius: 2px;
+      background: rgba(0, 0, 0, 0.02);
+      font-family: var(--font-family);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-fast);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    .yahtzee-bonus-btn:hover {
+      border-color: var(--color-accent);
+      color: var(--color-text);
+    }
+
+    .yahtzee-bonus-btn:active {
+      background: var(--color-accent-muted);
+    }
+
+    .yahtzee-bonus-value {
+      min-width: 24px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-align: center;
+      color: var(--color-text);
+    }
+
+    .yahtzee-bonus-value.has-bonus {
+      color: var(--color-accent);
+    }
+
+    /* ==================== WINNER POPUP ==================== */
+    .winner-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(28, 28, 26, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .winner-overlay.is-visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .winner-popup {
+      background: var(--color-bg);
+      border-radius: 8px;
+      padding: 2.5rem 3rem;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+      transform: scale(0.8) translateY(20px);
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+      max-width: 90vw;
+    }
+
+    .winner-overlay.is-visible .winner-popup {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+
+    .winner-popup__crown {
+      font-size: 3.5rem;
+      margin-bottom: 0.5rem;
+      animation: crownBounce 0.6s ease 0.3s both;
+    }
+
+    @keyframes crownBounce {
+      0% { transform: scale(0) rotate(-20deg); }
+      50% { transform: scale(1.3) rotate(10deg); }
+      70% { transform: scale(0.9) rotate(-5deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    .winner-popup__title {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: var(--color-text-muted);
+      margin-bottom: 0.5rem;
+      text-transform: lowercase;
+    }
+
+    .winner-popup__name {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--color-accent);
+      margin-bottom: 0.25rem;
+      animation: nameSlide 0.5s ease 0.4s both;
+    }
+
+    @keyframes nameSlide {
+      from { transform: translateY(10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .winner-popup__score {
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 1.5rem;
+      animation: scoreCount 0.6s ease 0.5s both;
+    }
+
+    @keyframes scoreCount {
+      from { transform: scale(0.5); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .winner-popup__label {
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--color-text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .winner-popup__btn {
+      font-family: var(--font-family);
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.8rem 2rem;
+      background: var(--color-accent);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      box-shadow: 0 4px 12px rgba(211, 84, 0, 0.3);
+    }
+
+    .winner-popup__btn:hover {
+      background: #e25d00;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(211, 84, 0, 0.4);
+    }
+
+    .winner-popup__btn:active {
+      transform: translateY(0);
+    }
+
+    .winner-popup__confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      animation: confettiFall 3s ease-out forwards;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(400px) rotate(720deg); opacity: 0; }
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+        font-size: 0.8rem;
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .page-title {
+        font-size: 1.1rem;
+      }
+
+      .scorecard th,
+      .scorecard td {
+        padding: 0.4rem 0.3rem;
+      }
+
+      .scorecard__category {
+        font-size: 0.65rem;
+        padding-left: 0.5rem !important;
+      }
+
+      .scorecard__hint {
+        display: none;
+      }
+
+      .player-name {
+        font-size: 0.65rem;
+        min-width: 45px;
+      }
+
+      .score-input,
+      .score-btn {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.2rem;
+        max-width: 40px;
+      }
+
+      .yahtzee-bonus-btn {
+        width: 32px;
+        height: 32px;
+      }
+
+      .controls {
+        width: 100%;
+      }
+
+      .btn {
+        flex: 1;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <h1 class="page-title">yahtzee</h1>
+    <a href="/" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+      back
+    </a>
+  </header>
+
+  <div class="controls">
+    <button class="btn" id="addPlayer">+ add player</button>
+    <button class="btn btn--danger" id="removePlayer">- remove player</button>
+    <button class="btn btn--accent" id="resetGame">reset game</button>
+  </div>
+
+  <!-- Winner Popup -->
+  <div class="winner-overlay" id="winnerOverlay">
+    <div class="winner-popup">
+      <div class="winner-popup__crown">👑</div>
+      <p class="winner-popup__title">winner</p>
+      <p class="winner-popup__name" id="winnerName">player 1</p>
+      <p class="winner-popup__score" id="winnerScore">0</p>
+      <p class="winner-popup__label">points</p>
+      <button class="winner-popup__btn" id="winnerReset">play again</button>
+    </div>
+  </div>
+
+  <div class="scorecard-wrapper">
+    <table class="scorecard" id="scorecard">
+      <thead>
+        <tr>
+          <th class="scorecard__category"></th>
+          <!-- Player columns added dynamically -->
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Upper Section -->
+        <tr>
+          <td colspan="6" class="scorecard__section-header">upper section</td>
+        </tr>
+        <tr data-category="ones">
+          <td class="scorecard__category">aces<span class="scorecard__hint">sum of 1s</span></td>
+        </tr>
+        <tr data-category="twos">
+          <td class="scorecard__category">twos<span class="scorecard__hint">sum of 2s</span></td>
+        </tr>
+        <tr data-category="threes">
+          <td class="scorecard__category">threes<span class="scorecard__hint">sum of 3s</span></td>
+        </tr>
+        <tr data-category="fours">
+          <td class="scorecard__category">fours<span class="scorecard__hint">sum of 4s</span></td>
+        </tr>
+        <tr data-category="fives">
+          <td class="scorecard__category">fives<span class="scorecard__hint">sum of 5s</span></td>
+        </tr>
+        <tr data-category="sixes">
+          <td class="scorecard__category">sixes<span class="scorecard__hint">sum of 6s</span></td>
+        </tr>
+        <tr data-category="upper-subtotal" class="scorecard__subtotal">
+          <td class="scorecard__category">upper total<span class="scorecard__hint">63 for bonus</span></td>
+        </tr>
+        <tr data-category="upper-bonus" class="scorecard__bonus">
+          <td class="scorecard__category">bonus<span class="scorecard__hint">+35 if >= 63</span></td>
+        </tr>
+        <tr data-category="upper-total" class="scorecard__subtotal">
+          <td class="scorecard__category">upper total</td>
+        </tr>
+
+        <!-- Lower Section -->
+        <tr>
+          <td colspan="6" class="scorecard__section-header">lower section</td>
+        </tr>
+        <tr data-category="three-of-kind">
+          <td class="scorecard__category">3 of a kind<span class="scorecard__hint">sum all dice</span></td>
+        </tr>
+        <tr data-category="four-of-kind">
+          <td class="scorecard__category">4 of a kind<span class="scorecard__hint">sum all dice</span></td>
+        </tr>
+        <tr data-category="full-house" data-fixed="25">
+          <td class="scorecard__category">full house<span class="scorecard__hint">25 pts</span></td>
+        </tr>
+        <tr data-category="small-straight" data-fixed="30">
+          <td class="scorecard__category">sm straight<span class="scorecard__hint">30 pts</span></td>
+        </tr>
+        <tr data-category="large-straight" data-fixed="40">
+          <td class="scorecard__category">lg straight<span class="scorecard__hint">40 pts</span></td>
+        </tr>
+        <tr data-category="yahtzee" data-fixed="50">
+          <td class="scorecard__category">yahtzee<span class="scorecard__hint">50 pts</span></td>
+        </tr>
+        <tr data-category="chance">
+          <td class="scorecard__category">chance<span class="scorecard__hint">sum all dice</span></td>
+        </tr>
+        <tr data-category="yahtzee-bonus">
+          <td class="scorecard__category">yahtzee bonus<span class="scorecard__hint">100 each</span></td>
+        </tr>
+        <tr data-category="lower-total" class="scorecard__subtotal">
+          <td class="scorecard__category">lower total</td>
+        </tr>
+
+        <!-- Grand Total -->
+        <tr data-category="grand-total" class="scorecard__grand-total">
+          <td class="scorecard__category">grand total</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const MAX_PLAYERS = 5;
+    const MAX_YAHTZEE_BONUS = 12;
+    let playerCount = 2;
+    let playerNames = ['player 1', 'player 2', 'player 3', 'player 4', 'player 5'];
+    let yahtzeeBonusCounts = [0, 0, 0, 0, 0];
+
+    const upperCategories = ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes'];
+    const variableLower = ['three-of-kind', 'four-of-kind', 'chance'];
+    const fixedLower = ['full-house', 'small-straight', 'large-straight', 'yahtzee'];
+
+    function initScorecard() {
+      // Attach button listeners ONCE
+      document.getElementById('addPlayer').addEventListener('click', () => {
+        if (playerCount < MAX_PLAYERS) {
+          savePlayerNames();
+          playerCount++;
+          renderPlayers();
+          attachScoreListeners();
+        }
+      });
+
+      document.getElementById('removePlayer').addEventListener('click', () => {
+        if (playerCount > 1) {
+          savePlayerNames();
+          playerCount--;
+          renderPlayers();
+          attachScoreListeners();
+        }
+      });
+
+      document.getElementById('resetGame').addEventListener('click', () => {
+        if (confirm('Reset game? All scores will be cleared.')) {
+          savePlayerNames();
+          yahtzeeBonusCounts = [0, 0, 0, 0, 0];
+          renderPlayers();
+          attachScoreListeners();
+        }
+      });
+
+      renderPlayers();
+      attachScoreListeners();
+    }
+
+    function savePlayerNames() {
+      document.querySelectorAll('.player-name').forEach(input => {
+        const idx = parseInt(input.dataset.player);
+        playerNames[idx] = input.value || `player ${idx + 1}`;
+      });
+    }
+
+    function renderPlayers() {
+      // Update header
+      const headerRow = document.querySelector('thead tr');
+      headerRow.innerHTML = '<th class="scorecard__category"></th>';
+      for (let i = 0; i < playerCount; i++) {
+        headerRow.innerHTML += `
+          <th>
+            <input type="text" class="player-name" data-player="${i}" value="${playerNames[i]}" maxlength="10">
+          </th>
+        `;
+      }
+
+      // Update section headers colspan
+      document.querySelectorAll('.scorecard__section-header').forEach(cell => {
+        cell.setAttribute('colspan', playerCount + 1);
+      });
+
+      // Update each row
+      document.querySelectorAll('tbody tr[data-category]').forEach(row => {
+        const category = row.dataset.category;
+        const fixed = row.dataset.fixed;
+
+        // Remove existing player cells (keep first td which is the category name)
+        while (row.children.length > 1) {
+          row.removeChild(row.lastChild);
+        }
+
+        // Add cells for each player
+        for (let i = 0; i < playerCount; i++) {
+          const td = document.createElement('td');
+
+          if (category === 'upper-subtotal' || category === 'upper-bonus' ||
+              category === 'upper-total' || category === 'lower-total' ||
+              category === 'grand-total') {
+            // Calculated fields
+            td.innerHTML = `<span class="score-calculated" data-player="${i}" data-calc="${category}">0</span>`;
+          } else if (category === 'yahtzee-bonus') {
+            // Yahtzee bonus counter with +/- buttons
+            const count = yahtzeeBonusCounts[i] || 0;
+            td.innerHTML = `
+              <div class="yahtzee-bonus-counter">
+                <button class="yahtzee-bonus-btn" data-player="${i}" data-action="minus">−</button>
+                <span class="yahtzee-bonus-value${count > 0 ? ' has-bonus' : ''}" data-player="${i}">${count}</span>
+                <button class="yahtzee-bonus-btn" data-player="${i}" data-action="plus">+</button>
+              </div>
+            `;
+          } else if (fixed) {
+            // Fixed value buttons (tap to toggle)
+            td.innerHTML = `<button class="score-btn" data-player="${i}" data-category="${category}" data-value="${fixed}">${fixed}</button>`;
+          } else {
+            // Input fields
+            td.innerHTML = `<input type="number" class="score-input" data-player="${i}" data-category="${category}" min="0" max="30" inputmode="numeric">`;
+          }
+
+          row.appendChild(td);
+        }
+      });
+    }
+
+    function attachScoreListeners() {
+      // Player name change listeners
+      document.querySelectorAll('.player-name').forEach(input => {
+        input.addEventListener('change', () => {
+          const idx = parseInt(input.dataset.player);
+          playerNames[idx] = input.value || `player ${idx + 1}`;
+        });
+      });
+
+      // Score inputs
+      document.querySelectorAll('.score-input').forEach(input => {
+        input.addEventListener('input', () => {
+          const val = input.value;
+          input.classList.remove('has-value', 'is-zero');
+          if (val === '0') {
+            input.classList.add('is-zero');
+          } else if (val !== '') {
+            input.classList.add('has-value');
+          }
+          calculateTotals(parseInt(input.dataset.player));
+        });
+      });
+
+      // Fixed score buttons (3-state: inactive -> active -> zero)
+      document.querySelectorAll('.score-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (btn.classList.contains('is-zero')) {
+            // Zero -> Inactive
+            btn.classList.remove('is-zero');
+            btn.textContent = btn.dataset.value;
+          } else if (btn.classList.contains('is-active')) {
+            // Active -> Zero (scored as 0)
+            btn.classList.remove('is-active');
+            btn.classList.add('is-zero');
+            btn.textContent = '0';
+          } else {
+            // Inactive -> Active (scored full value)
+            btn.classList.add('is-active');
+          }
+          calculateTotals(parseInt(btn.dataset.player));
+        });
+      });
+
+      // Yahtzee bonus counter buttons
+      document.querySelectorAll('.yahtzee-bonus-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const playerIdx = parseInt(btn.dataset.player);
+          const action = btn.dataset.action;
+
+          if (action === 'plus' && yahtzeeBonusCounts[playerIdx] < MAX_YAHTZEE_BONUS) {
+            yahtzeeBonusCounts[playerIdx]++;
+          } else if (action === 'minus' && yahtzeeBonusCounts[playerIdx] > 0) {
+            yahtzeeBonusCounts[playerIdx]--;
+          }
+
+          // Update display
+          const valueEl = document.querySelector(`.yahtzee-bonus-value[data-player="${playerIdx}"]`);
+          if (valueEl) {
+            valueEl.textContent = yahtzeeBonusCounts[playerIdx];
+            valueEl.classList.toggle('has-bonus', yahtzeeBonusCounts[playerIdx] > 0);
+          }
+
+          calculateTotals(playerIdx);
+        });
+      });
+    }
+
+    function calculateTotals(playerIndex) {
+      // Upper section subtotal
+      let upperSubtotal = 0;
+      upperCategories.forEach(cat => {
+        const input = document.querySelector(`.score-input[data-player="${playerIndex}"][data-category="${cat}"]`);
+        if (input && input.value) {
+          upperSubtotal += parseInt(input.value) || 0;
+        }
+      });
+
+      // Upper bonus (35 if >= 63)
+      const upperBonus = upperSubtotal >= 63 ? 35 : 0;
+
+      // Upper total
+      const upperTotal = upperSubtotal + upperBonus;
+
+      // Update upper section displays
+      const upperSubtotalEl = document.querySelector(`.score-calculated[data-player="${playerIndex}"][data-calc="upper-subtotal"]`);
+      const upperBonusEl = document.querySelector(`.score-calculated[data-player="${playerIndex}"][data-calc="upper-bonus"]`);
+      const upperTotalEl = document.querySelector(`.score-calculated[data-player="${playerIndex}"][data-calc="upper-total"]`);
+
+      if (upperSubtotalEl) {
+        upperSubtotalEl.textContent = upperSubtotal;
+        upperSubtotalEl.classList.toggle('has-bonus', upperSubtotal >= 63);
+      }
+      if (upperBonusEl) {
+        upperBonusEl.textContent = upperBonus;
+        upperBonusEl.classList.toggle('has-bonus', upperBonus > 0);
+      }
+      if (upperTotalEl) upperTotalEl.textContent = upperTotal;
+
+      // Lower section total
+      let lowerTotal = 0;
+
+      // Variable lower scores
+      variableLower.forEach(cat => {
+        const input = document.querySelector(`.score-input[data-player="${playerIndex}"][data-category="${cat}"]`);
+        if (input && input.value) {
+          lowerTotal += parseInt(input.value) || 0;
+        }
+      });
+
+      // Fixed lower scores
+      fixedLower.forEach(cat => {
+        const btn = document.querySelector(`.score-btn[data-player="${playerIndex}"][data-category="${cat}"]`);
+        if (btn) {
+          if (btn.classList.contains('is-active')) {
+            lowerTotal += parseInt(btn.dataset.value);
+          }
+          // is-zero contributes 0
+        }
+      });
+
+      // Yahtzee bonus (100 each)
+      lowerTotal += yahtzeeBonusCounts[playerIndex] * 100;
+
+      // Update lower total
+      const lowerTotalEl = document.querySelector(`.score-calculated[data-player="${playerIndex}"][data-calc="lower-total"]`);
+      if (lowerTotalEl) lowerTotalEl.textContent = lowerTotal;
+
+      // Grand total
+      const grandTotal = upperTotal + lowerTotal;
+      const grandTotalEl = document.querySelector(`.score-calculated[data-player="${playerIndex}"][data-calc="grand-total"]`);
+      if (grandTotalEl) grandTotalEl.textContent = grandTotal;
+
+      // Check if game is complete
+      checkForWinner();
+    }
+
+    function isGameComplete() {
+      // Check all score inputs have values
+      const inputs = document.querySelectorAll('.score-input');
+      for (const input of inputs) {
+        if (input.value === '') return false;
+      }
+
+      // Check all fixed buttons are either active or zero (not inactive)
+      const buttons = document.querySelectorAll('.score-btn');
+      for (const btn of buttons) {
+        if (!btn.classList.contains('is-active') && !btn.classList.contains('is-zero')) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    function checkForWinner() {
+      if (!isGameComplete()) return;
+
+      // Find winner
+      let highestScore = -1;
+      let winnerIdx = 0;
+
+      for (let i = 0; i < playerCount; i++) {
+        const grandTotalEl = document.querySelector(`.score-calculated[data-player="${i}"][data-calc="grand-total"]`);
+        if (grandTotalEl) {
+          const score = parseInt(grandTotalEl.textContent) || 0;
+          if (score > highestScore) {
+            highestScore = score;
+            winnerIdx = i;
+          }
+        }
+      }
+
+      // Show winner popup
+      showWinnerPopup(playerNames[winnerIdx], highestScore);
+    }
+
+    function showWinnerPopup(name, score) {
+      const overlay = document.getElementById('winnerOverlay');
+      document.getElementById('winnerName').textContent = name;
+      document.getElementById('winnerScore').textContent = score;
+
+      // Create confetti
+      createConfetti(overlay);
+
+      // Show popup
+      overlay.classList.add('is-visible');
+    }
+
+    function createConfetti(container) {
+      const colors = ['#D35400', '#f39c12', '#e74c3c', '#9b59b6', '#3498db', '#2ecc71'];
+      const popup = container.querySelector('.winner-popup');
+
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'winner-popup__confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.top = '-20px';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+        confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+        container.appendChild(confetti);
+
+        // Clean up after animation
+        setTimeout(() => confetti.remove(), 4000);
+      }
+    }
+
+    function hideWinnerPopup() {
+      const overlay = document.getElementById('winnerOverlay');
+      overlay.classList.remove('is-visible');
+    }
+
+    function resetGame() {
+      savePlayerNames();
+      yahtzeeBonusCounts = [0, 0, 0, 0, 0];
+      renderPlayers();
+      attachScoreListeners();
+      hideWinnerPopup();
+    }
+
+    // Winner popup reset button
+    document.getElementById('winnerReset').addEventListener('click', resetGame);
+
+    // Also close on overlay click
+    document.getElementById('winnerOverlay').addEventListener('click', (e) => {
+      if (e.target.id === 'winnerOverlay') {
+        hideWinnerPopup();
+      }
+    });
+
+    // Initialize on load
+    initScorecard();
+  </script>
+</body>
+</html>
