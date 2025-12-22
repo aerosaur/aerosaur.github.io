@@ -275,61 +275,76 @@
       background: white;
     }
 
-    /* Score inputs (upper section + variable lower) */
-    .score-input {
-      width: 100%;
-      max-width: 50px;
-      padding: 0.4rem;
+    /* Score counter (upper section + variable lower) */
+    .score-counter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.15rem;
+    }
+
+    .score-counter-btn {
+      width: 28px;
+      height: 28px;
       border: 1px solid var(--color-border);
       border-radius: 2px;
       background: rgba(0, 0, 0, 0.02);
       font-family: var(--font-family);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-fast);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    .score-counter-btn:hover {
+      border-color: var(--color-accent);
+      color: var(--color-text);
+    }
+
+    .score-counter-btn:active {
+      background: var(--color-accent-muted);
+    }
+
+    .score-counter-value {
+      min-width: 32px;
+      padding: 0.25rem 0.15rem;
+      font-weight: 600;
       font-size: 0.8rem;
       text-align: center;
-      color: var(--color-text);
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+      color: var(--color-text-muted);
+      border-radius: 2px;
       transition: all var(--transition-fast);
     }
 
-    .score-input:hover {
-      border-color: var(--color-text-muted);
-    }
-
-    .score-input:focus {
-      outline: none;
-      border-color: var(--color-accent);
-      background: white;
-      box-shadow: 0 0 0 2px var(--color-accent-muted);
-    }
-
-    .score-input.has-value {
+    .score-counter-value.is-filled {
       background: var(--color-accent);
-      border-color: var(--color-accent);
       color: white;
-      font-weight: 600;
     }
 
-    .score-input.has-value:focus {
-      background: var(--color-accent);
-      box-shadow: 0 0 0 2px var(--color-accent-muted);
-    }
-
-    .score-input.is-zero {
+    .score-counter-value.is-zero {
       background: #4a4a4a;
-      border-color: #4a4a4a;
       color: white;
-      font-weight: 600;
       text-decoration: line-through;
     }
 
-    .score-input::-webkit-inner-spin-button,
-    .score-input::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
+    /* Sticky header for player names */
+    .scorecard-wrapper {
+      max-height: calc(100vh - 180px);
+      overflow-y: auto;
     }
 
-    .score-input[type=number] {
-      -moz-appearance: textfield;
+    .scorecard thead th {
+      position: sticky;
+      top: 0;
+      background: var(--color-bg);
+      box-shadow: 0 1px 0 var(--color-border);
+      z-index: 10;
     }
 
     /* Fixed score buttons (tap to toggle) */
@@ -591,16 +606,21 @@
         min-width: 45px;
       }
 
-      .score-input,
       .score-btn {
         font-size: 0.75rem;
         padding: 0.35rem 0.2rem;
         max-width: 40px;
       }
 
+      .score-counter-btn,
       .yahtzee-bonus-btn {
         width: 32px;
         height: 32px;
+      }
+
+      .score-counter-value {
+        min-width: 28px;
+        font-size: 0.75rem;
       }
 
       .controls {
@@ -731,9 +751,31 @@
     let playerNames = ['player 1', 'player 2', 'player 3', 'player 4', 'player 5'];
     let yahtzeeBonusCounts = [0, 0, 0, 0, 0];
 
+    // Score storage for counter-based inputs
+    let scores = {};
+    let filledCategories = {};
+    let zeroCategories = {}; // Track intentional zeros (strikethrough)
+
     const upperCategories = ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes'];
+    const upperValues = { ones: 1, twos: 2, threes: 3, fours: 4, fives: 5, sixes: 6 };
+    const upperMax = { ones: 5, twos: 10, threes: 15, fours: 20, fives: 25, sixes: 30 };
     const variableLower = ['three-of-kind', 'four-of-kind', 'chance'];
     const fixedLower = ['full-house', 'small-straight', 'large-straight', 'yahtzee'];
+    const allCounterCategories = [...upperCategories, ...variableLower];
+
+    function initScores() {
+      for (let p = 0; p < MAX_PLAYERS; p++) {
+        scores[p] = {};
+        filledCategories[p] = {};
+        zeroCategories[p] = {};
+        allCounterCategories.forEach(cat => {
+          scores[p][cat] = 0;
+          filledCategories[p][cat] = false;
+          zeroCategories[p][cat] = false;
+        });
+      }
+    }
+    initScores();
 
     function initScorecard() {
       // Attach button listeners ONCE
@@ -759,6 +801,7 @@
         if (confirm('Reset game? All scores will be cleared.')) {
           savePlayerNames();
           yahtzeeBonusCounts = [0, 0, 0, 0, 0];
+          initScores(); // Reset counter scores and filled states
           renderPlayers();
           attachScoreListeners();
         }
@@ -824,9 +867,22 @@
           } else if (fixed) {
             // Fixed value buttons (tap to toggle)
             td.innerHTML = `<button class="score-btn" data-player="${i}" data-category="${category}" data-value="${fixed}">${fixed}</button>`;
-          } else {
-            // Input fields
-            td.innerHTML = `<input type="number" class="score-input" data-player="${i}" data-category="${category}" min="0" max="30" inputmode="numeric">`;
+          } else if (upperCategories.includes(category) || variableLower.includes(category)) {
+            // Counter UI for upper section and variable lower section
+            const score = scores[i][category] || 0;
+            const filled = filledCategories[i][category];
+            const isZero = zeroCategories[i][category];
+            let valueClass = 'score-counter-value';
+            if (isZero) valueClass += ' is-zero';
+            else if (filled) valueClass += ' is-filled';
+
+            td.innerHTML = `
+              <div class="score-counter">
+                <button class="score-counter-btn" data-player="${i}" data-category="${category}" data-action="minus">−</button>
+                <span class="${valueClass}" data-player="${i}" data-category="${category}">${score}</span>
+                <button class="score-counter-btn" data-player="${i}" data-category="${category}" data-action="plus">+</button>
+              </div>
+            `;
           }
 
           row.appendChild(td);
@@ -843,17 +899,64 @@
         });
       });
 
-      // Score inputs
-      document.querySelectorAll('.score-input').forEach(input => {
-        input.addEventListener('input', () => {
-          const val = input.value;
-          input.classList.remove('has-value', 'is-zero');
-          if (val === '0') {
-            input.classList.add('is-zero');
-          } else if (val !== '') {
-            input.classList.add('has-value');
+      // Score counter buttons (upper section + variable lower)
+      document.querySelectorAll('.score-counter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const playerIdx = parseInt(btn.dataset.player);
+          const category = btn.dataset.category;
+          const action = btn.dataset.action;
+
+          // Determine increment value
+          let increment;
+          if (upperCategories.includes(category)) {
+            // Upper section: add/remove the die value
+            increment = upperValues[category];
+          } else {
+            // Variable lower: add/remove 1
+            increment = 1;
           }
-          calculateTotals(parseInt(input.dataset.player));
+
+          // Determine max value
+          let maxVal;
+          if (upperCategories.includes(category)) {
+            maxVal = upperMax[category];
+          } else {
+            maxVal = 30; // 3/4 of a kind and chance max
+          }
+
+          // Update score
+          if (action === 'plus') {
+            if (scores[playerIdx][category] < maxVal) {
+              scores[playerIdx][category] = Math.min(scores[playerIdx][category] + increment, maxVal);
+              filledCategories[playerIdx][category] = true;
+              zeroCategories[playerIdx][category] = false;
+            }
+          } else if (action === 'minus') {
+            if (scores[playerIdx][category] > 0) {
+              // Has value -> subtract
+              scores[playerIdx][category] = Math.max(scores[playerIdx][category] - increment, 0);
+              // If back to 0, become unfilled (grey)
+              if (scores[playerIdx][category] === 0) {
+                filledCategories[playerIdx][category] = false;
+                zeroCategories[playerIdx][category] = false;
+              }
+            } else if (scores[playerIdx][category] === 0) {
+              // At 0 -> toggle strikethrough
+              if (zeroCategories[playerIdx][category]) {
+                // Strikethrough -> grey (unfilled)
+                zeroCategories[playerIdx][category] = false;
+                filledCategories[playerIdx][category] = false;
+              } else {
+                // Grey -> strikethrough (committed zero)
+                zeroCategories[playerIdx][category] = true;
+                filledCategories[playerIdx][category] = true;
+              }
+            }
+          }
+
+          // Update display
+          updateCounterDisplay(playerIdx, category);
+          calculateTotals(playerIdx);
         });
       });
 
@@ -901,14 +1004,31 @@
       });
     }
 
+    function updateCounterDisplay(playerIdx, category) {
+      const valueEl = document.querySelector(`.score-counter-value[data-player="${playerIdx}"][data-category="${category}"]`);
+      if (valueEl) {
+        const score = scores[playerIdx][category];
+        const filled = filledCategories[playerIdx][category];
+        const isZero = zeroCategories[playerIdx][category];
+
+        valueEl.textContent = score;
+        valueEl.classList.remove('is-filled', 'is-zero');
+
+        if (isZero) {
+          // Intentional zero (strikethrough)
+          valueEl.classList.add('is-zero');
+        } else if (filled) {
+          // Filled with value (or filled 0 not yet committed)
+          valueEl.classList.add('is-filled');
+        }
+      }
+    }
+
     function calculateTotals(playerIndex) {
-      // Upper section subtotal
+      // Upper section subtotal (from scores object)
       let upperSubtotal = 0;
       upperCategories.forEach(cat => {
-        const input = document.querySelector(`.score-input[data-player="${playerIndex}"][data-category="${cat}"]`);
-        if (input && input.value) {
-          upperSubtotal += parseInt(input.value) || 0;
-        }
+        upperSubtotal += scores[playerIndex][cat] || 0;
       });
 
       // Upper bonus (35 if >= 63)
@@ -935,12 +1055,9 @@
       // Lower section total
       let lowerTotal = 0;
 
-      // Variable lower scores
+      // Variable lower scores (from scores object)
       variableLower.forEach(cat => {
-        const input = document.querySelector(`.score-input[data-player="${playerIndex}"][data-category="${cat}"]`);
-        if (input && input.value) {
-          lowerTotal += parseInt(input.value) || 0;
-        }
+        lowerTotal += scores[playerIndex][cat] || 0;
       });
 
       // Fixed lower scores
@@ -971,10 +1088,14 @@
     }
 
     function isGameComplete() {
-      // Check all score inputs have values
-      const inputs = document.querySelectorAll('.score-input');
-      for (const input of inputs) {
-        if (input.value === '') return false;
+      // Check all counter categories are completed for all players
+      // A category is complete if it has a score > 0 OR is marked as intentional zero
+      for (let p = 0; p < playerCount; p++) {
+        for (const cat of allCounterCategories) {
+          const hasScore = scores[p][cat] > 0;
+          const isZero = zeroCategories[p][cat];
+          if (!hasScore && !isZero) return false;
+        }
       }
 
       // Check all fixed buttons are either active or zero (not inactive)
@@ -1049,6 +1170,7 @@
     function resetGame() {
       savePlayerNames();
       yahtzeeBonusCounts = [0, 0, 0, 0, 0];
+      initScores(); // Reset counter scores and filled states
       renderPlayers();
       attachScoreListeners();
       hideWinnerPopup();
