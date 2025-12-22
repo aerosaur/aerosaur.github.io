@@ -1049,6 +1049,81 @@
     }
 
     /* prefers-reduced-motion handled in JavaScript */
+
+    /* ==================== SCROLL LYRICS ==================== */
+    .scroll-lyrics {
+      max-width: 600px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+      text-align: center;
+    }
+
+    .scroll-lyrics__section {
+      margin-bottom: 3rem;
+    }
+
+    .scroll-lyrics__label {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--color-text-muted);
+      margin-bottom: 1.5rem;
+      text-transform: lowercase;
+    }
+
+    .scroll-lyrics__line {
+      font-family: var(--font-family);
+      font-size: 1.1rem;
+      line-height: 2;
+      color: var(--color-text);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .scroll-lyrics__line.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .scroll-lyrics__line--em {
+      font-style: italic;
+      color: var(--color-text-muted);
+    }
+
+    /* Stagger delays for lines */
+    .scroll-lyrics__line:nth-child(2) { transition-delay: 0.05s; }
+    .scroll-lyrics__line:nth-child(3) { transition-delay: 0.1s; }
+    .scroll-lyrics__line:nth-child(4) { transition-delay: 0.15s; }
+    .scroll-lyrics__line:nth-child(5) { transition-delay: 0.2s; }
+    .scroll-lyrics__line:nth-child(6) { transition-delay: 0.25s; }
+    .scroll-lyrics__line:nth-child(7) { transition-delay: 0.3s; }
+    .scroll-lyrics__line:nth-child(8) { transition-delay: 0.35s; }
+    .scroll-lyrics__line:nth-child(9) { transition-delay: 0.4s; }
+    .scroll-lyrics__line:nth-child(10) { transition-delay: 0.45s; }
+
+    @media (max-width: 500px) {
+      .scroll-lyrics {
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+      }
+
+      .scroll-lyrics__line {
+        font-size: 0.95rem;
+        line-height: 1.9;
+      }
+
+      .scroll-lyrics__section {
+        margin-bottom: 2.5rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .scroll-lyrics__line {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1186,6 +1261,107 @@
       </div>
     </div>
   </div>
+
+  <!-- Scroll Lyrics Section -->
+  <section class="scroll-lyrics">
+    <div class="scroll-lyrics__section">
+      <p class="scroll-lyrics__label">verse 1</p>
+      <p class="scroll-lyrics__line">I didn't notice how heavy I was</p>
+      <p class="scroll-lyrics__line">'Til you set the bags down for me.</p>
+      <p class="scroll-lyrics__line">Didn't notice the quiet I craved</p>
+      <p class="scroll-lyrics__line">'Til you filled the room gently.</p>
+      <p class="scroll-lyrics__line">Kettle on, soft yellow light,</p>
+      <p class="scroll-lyrics__line">Rain tapping time on the leaves—</p>
+      <p class="scroll-lyrics__line">You laughed at the mess I'd made</p>
+      <p class="scroll-lyrics__line">And said, "Leave some weight with me."</p>
+    </div>
+
+    <div class="scroll-lyrics__section">
+      <p class="scroll-lyrics__label">pre-chorus</p>
+      <p class="scroll-lyrics__line scroll-lyrics__line--em">I'd grown used to holding my breath,</p>
+      <p class="scroll-lyrics__line scroll-lyrics__line--em">Thinking the silence was safety.</p>
+      <p class="scroll-lyrics__line scroll-lyrics__line--em">You took the lock from my chest</p>
+      <p class="scroll-lyrics__line scroll-lyrics__line--em">With hands that never hurry.</p>
+    </div>
+
+    <div class="scroll-lyrics__section">
+      <p class="scroll-lyrics__label">chorus</p>
+      <p class="scroll-lyrics__line">You make it easy to breathe,</p>
+      <p class="scroll-lyrics__line">Like windows open in spring.</p>
+      <p class="scroll-lyrics__line">All that I carried alone</p>
+      <p class="scroll-lyrics__line">Doesn't mean quite the same thing.</p>
+      <p class="scroll-lyrics__line">You make it easy to breathe—</p>
+      <p class="scroll-lyrics__line">Air in my lungs finds a home.</p>
+      <p class="scroll-lyrics__line">You make it easy to breathe,</p>
+      <p class="scroll-lyrics__line">So I don't have to go it alone.</p>
+    </div>
+
+    <div class="scroll-lyrics__section">
+      <p class="scroll-lyrics__label">verse 2</p>
+      <p class="scroll-lyrics__line">I didn't notice the miles in my voice,</p>
+      <p class="scroll-lyrics__line">How far I'd drifted from sleep—</p>
+      <p class="scroll-lyrics__line">Wore yesterday's thunder like clothes,</p>
+      <p class="scroll-lyrics__line">Dreams folded under my feet.</p>
+      <p class="scroll-lyrics__line">You wrote a note on the fridge:</p>
+      <p class="scroll-lyrics__line">"Rest isn't weakness, it's wise."</p>
+      <p class="scroll-lyrics__line">I read it twice in the morning light</p>
+      <p class="scroll-lyrics__line">And felt the weather inside.</p>
+    </div>
+
+    <div class="scroll-lyrics__section">
+      <p class="scroll-lyrics__label">pre-chorus</p>
+      <p class="scroll-lyrics__line scroll-lyrics__line--em">I'd grown used to empty rooms,</p>
+      <p class="scroll-lyrics__line scroll-lyrics__line--em">Echoes and flickering screens—</p>
+      <p class="scroll-lyrics__line scroll-lyrics__line--em">You showed me the smallest proof:</p>
+      <p class="scroll-lyrics__line scroll-lyrics__line--em">A hush that lets you sing.</p>
+    </div>
+
+    <div class="scroll-lyrics__section">
+      <p class="scroll-lyrics__label">chorus</p>
+      <p class="scroll-lyrics__line">You make it easy to breathe,</p>
+      <p class="scroll-lyrics__line">Like windows open in spring.</p>
+      <p class="scroll-lyrics__line">All that I carried alone</p>
+      <p class="scroll-lyrics__line">Doesn't mean quite the same thing.</p>
+      <p class="scroll-lyrics__line">You make it easy to breathe—</p>
+      <p class="scroll-lyrics__line">Air in my lungs finds a home.</p>
+      <p class="scroll-lyrics__line">You make it easy to breathe,</p>
+      <p class="scroll-lyrics__line">So I don't have to go it alone.</p>
+    </div>
+
+    <div class="scroll-lyrics__section">
+      <p class="scroll-lyrics__label">bridge</p>
+      <p class="scroll-lyrics__line">We walk slow past closed-up shops,</p>
+      <p class="scroll-lyrics__line">Streetlamps pooling our steps.</p>
+      <p class="scroll-lyrics__line">You say, "Some burdens are borrowed,"</p>
+      <p class="scroll-lyrics__line">And I finally give mine back.</p>
+    </div>
+
+    <div class="scroll-lyrics__section">
+      <p class="scroll-lyrics__label">down chorus</p>
+      <p class="scroll-lyrics__line scroll-lyrics__line--em">You make it easy to breathe…</p>
+      <p class="scroll-lyrics__line scroll-lyrics__line--em">Easy to breathe…</p>
+      <p class="scroll-lyrics__line scroll-lyrics__line--em">I didn't notice how heavy I was—</p>
+      <p class="scroll-lyrics__line scroll-lyrics__line--em">Now the weight isn't only on me.</p>
+    </div>
+
+    <div class="scroll-lyrics__section">
+      <p class="scroll-lyrics__label">chorus</p>
+      <p class="scroll-lyrics__line">You make it easy to breathe,</p>
+      <p class="scroll-lyrics__line">Like windows open in spring.</p>
+      <p class="scroll-lyrics__line">All that I carried alone</p>
+      <p class="scroll-lyrics__line">Doesn't mean quite the same thing.</p>
+      <p class="scroll-lyrics__line">You make it easy to breathe—</p>
+      <p class="scroll-lyrics__line">Air in my lungs finds a home.</p>
+      <p class="scroll-lyrics__line">You make it easy to breathe,</p>
+      <p class="scroll-lyrics__line">So I don't have to go it alone.</p>
+    </div>
+
+    <div class="scroll-lyrics__section">
+      <p class="scroll-lyrics__label">tag</p>
+      <p class="scroll-lyrics__line">Set the bags down, stay a while—</p>
+      <p class="scroll-lyrics__line">You make it easy to breathe.</p>
+    </div>
+  </section>
 
   <!-- Hidden Audio Element -->
   <audio id="audio" preload="metadata">
@@ -1371,6 +1547,21 @@
         ffBtn.click();
       }
     });
+
+    // Scroll lyrics reveal - Intersection Observer
+    const lyricLines = document.querySelectorAll('.scroll-lyrics__line');
+    const lyricObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    lyricLines.forEach(line => lyricObserver.observe(line));
   </script>
 </body>
 </html>
